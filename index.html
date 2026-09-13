@@ -191,6 +191,27 @@
     font-size: clamp(13px, 3.5vw, 15px);
     opacity: 0.9;
   }
+  .reset-wrap {
+    display: flex;
+    justify-content: center;
+    margin-top: 22px;
+  }
+  .reset-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    padding: 8px 20px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--ink);
+    background: transparent;
+    border: 1px solid var(--skin-shade);
+    border-radius: 999px;
+    opacity: 0.6;
+    touch-action: manipulation;
+  }
+  .reset-btn:active {
+    opacity: 1;
+  }
   @media (max-height: 640px) {
     .character { width: 180px; height: 210px; }
     .stage { min-height: 200px; }
@@ -239,6 +260,9 @@
       <span class="btn-label">背中</span>
       <span class="btn-count" id="count-back">0回</span>
     </div>
+  </div>
+  <div class="reset-wrap">
+    <button class="reset-btn" id="resetBtn">最初から</button>
   </div>
 </div>
 <script>
@@ -337,6 +361,18 @@
       infoDesc.textContent = p.desc;
       saveProgress();
     });
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', () => {
+    if (!window.confirm('本当に最初からやり直しますか？')) return;
+    Object.keys(parts).forEach(key => {
+      parts[key].count = 0;
+      document.getElementById('count-' + key).textContent = '0回';
+      applyGrowth(key);
+    });
+    infoName.textContent = 'さあ、鍛えよう！';
+    infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中）をタップして筋トレを始めましょう';
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   });
 
   loadProgress();
