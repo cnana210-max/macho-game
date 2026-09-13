@@ -15,6 +15,9 @@
     --accent-dark: #e0501d;
     --ink: #3a2a1a;
     --panel: #ffffff;
+    --mask-red: #d81e3f;
+    --mask-red-dark: #a91530;
+    --mask-gold: #f0b429;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -65,9 +68,33 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: var(--skin);
-    border: 3px solid var(--skin-shade);
+    background: linear-gradient(90deg,
+      var(--mask-gold) 0%, var(--mask-gold) 14%,
+      var(--mask-red) 14%, var(--mask-red) 86%,
+      var(--mask-gold) 86%, var(--mask-gold) 100%);
+    border: 3px solid var(--mask-red-dark);
     z-index: 3;
+  }
+  .mask-eye {
+    position: absolute;
+    top: 20px;
+    width: 10px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+    border: 1.5px solid var(--ink);
+  }
+  .mask-eye-left { left: 10px; }
+  .mask-eye-right { right: 10px; }
+  .mask-mouth {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 7px;
+    border-radius: 0 0 8px 8px;
+    background: var(--mask-red-dark);
   }
   .body-part {
     -webkit-appearance: none;
@@ -87,9 +114,9 @@
     top: 52px;
     left: 50%;
     transform: translateX(-50%);
-    width: 90px;
+    width: 70px;
     height: 100px;
-    border-radius: 24px 24px 30px 30px;
+    border-radius: 20px 20px 26px 26px;
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease;
@@ -98,48 +125,48 @@
   .arm {
     position: absolute;
     top: 62px;
-    width: 24px;
+    width: 16px;
     height: 90px;
-    border-radius: 14px;
+    border-radius: 10px;
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease, transform 0.25s ease;
     z-index: 1;
   }
-  .arm-left { left: 50%; transform: translateX(calc(-45px - 100%)); transform-origin: top center; }
-  .arm-right { left: 50%; transform: translateX(45px); transform-origin: top center; }
+  .arm-left { left: 50%; transform: translateX(calc(-35px - 100%)) rotate(-8deg); transform-origin: top center; }
+  .arm-right { left: 50%; transform: translateX(35px) rotate(8deg); transform-origin: top center; }
   .shoulder {
     position: absolute;
     top: 50px;
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease, height 0.25s ease;
     z-index: 2;
   }
-  .shoulder-left { left: 50%; transform: translateX(-65px); }
+  .shoulder-left { left: 50%; transform: translateX(-53px); }
   .shoulder-right { left: 50%; transform: translateX(33px); }
   .back {
     position: absolute;
     top: 150px;
-    width: 22px;
+    width: 16px;
     height: 50px;
     border-radius: 10px;
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease;
-    z-index: 0;
+    z-index: 2;
   }
-  .back-left { left: 50%; transform: translateX(calc(-45px - 100%)); }
-  .back-right { left: 50%; transform: translateX(45px); }
+  .back-left { left: 50%; transform: translateX(calc(-35px - 100%)); }
+  .back-right { left: 50%; transform: translateX(35px); }
   .leg {
     position: absolute;
     top: 148px;
-    width: 32px;
+    width: 22px;
     height: 100px;
-    border-radius: 0 0 16px 16px;
+    border-radius: 0 0 12px 12px;
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease;
@@ -152,14 +179,40 @@
     top: 112px;
     left: 50%;
     transform: translateX(-50%);
-    width: 46px;
+    width: 32px;
     height: 36px;
-    border-radius: 12px;
+    border-radius: 10px;
     background: var(--skin-shade);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease;
     z-index: 2;
   }
+  .trunks {
+    position: absolute;
+    top: 148px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 84px;
+    height: 22px;
+    background: var(--mask-red);
+    border: 2px solid var(--mask-gold);
+    border-radius: 8px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .boot {
+    position: absolute;
+    top: 222px;
+    width: 38px;
+    height: 20px;
+    background: var(--mask-gold);
+    border: 2px solid var(--mask-red-dark);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .boot-left { left: 50%; transform: translateX(-38px); }
+  .boot-right { left: 50%; transform: translateX(6px); }
   .info {
     background: var(--panel);
     border-radius: 16px;
@@ -226,8 +279,11 @@
     opacity: 1;
   }
   @media (max-height: 640px) {
-    .character { width: 180px; height: 210px; }
-    .stage { min-height: 200px; }
+    .character { width: 180px; height: 246px; }
+    .stage { min-height: 246px; padding: 6px 0 12px; }
+    h1 { margin: 2px 0 8px; }
+    .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
+    .reset-wrap { margin-top: 12px; }
   }
 </style>
 </head>
@@ -236,7 +292,11 @@
   <h1>マッチョ育成ゲーム</h1>
   <div class="stage">
     <div class="character">
-      <div class="head"></div>
+      <div class="head">
+        <span class="mask-eye mask-eye-left"></span>
+        <span class="mask-eye mask-eye-right"></span>
+        <span class="mask-mouth"></span>
+      </div>
       <button class="body-part shoulder shoulder-left" id="part-shoulder-left" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
       <button class="body-part shoulder shoulder-right" id="part-shoulder-right" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
       <button class="body-part torso" id="part-chest" data-part="chest" aria-label="胸をタップして鍛える"></button>
@@ -245,8 +305,11 @@
       <button class="body-part back back-right" id="part-back-right" data-part="back" aria-label="背中をタップして鍛える"></button>
       <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える"></button>
       <button class="body-part arm arm-right" id="part-arm-right" data-part="arm" aria-label="腕をタップして鍛える"></button>
+      <div class="trunks"></div>
       <button class="body-part leg leg-left" id="part-leg-left" data-part="leg" aria-label="脚をタップして鍛える"></button>
       <button class="body-part leg leg-right" id="part-leg-right" data-part="leg" aria-label="脚をタップして鍛える"></button>
+      <div class="boot boot-left"></div>
+      <div class="boot boot-right"></div>
     </div>
   </div>
   <div class="info" id="info">
@@ -289,32 +352,32 @@
       name: '大胸筋',
       desc: '胸の中心を覆う大きな筋肉。押す動作で使われます。',
       els: [document.getElementById('part-chest')],
-      baseWidth: 90,
-      maxAdd: 46,
+      baseWidth: 70,
+      maxAdd: 50,
       count: 0
     },
     arm: {
       name: '上腕二頭筋',
       desc: '腕の力こぶ。ものを持ち上げる動作で使われます。',
       els: [document.getElementById('part-arm-left'), document.getElementById('part-arm-right')],
-      baseWidth: 24,
-      maxAdd: 20,
+      baseWidth: 16,
+      maxAdd: 26,
       count: 0
     },
     leg: {
       name: '大腿四頭筋',
       desc: '太ももの前側の筋肉。歩く・走るときに使われます。',
       els: [document.getElementById('part-leg-left'), document.getElementById('part-leg-right')],
-      baseWidth: 32,
-      maxAdd: 22,
+      baseWidth: 22,
+      maxAdd: 30,
       count: 0
     },
     shoulder: {
       name: '三角筋',
       desc: '肩を丸く覆う筋肉。腕を横に上げる動作で使われます。',
       els: [document.getElementById('part-shoulder-left'), document.getElementById('part-shoulder-right')],
-      baseWidth: 32,
-      maxAdd: 14,
+      baseWidth: 20,
+      maxAdd: 20,
       growHeight: true,
       count: 0
     },
@@ -322,16 +385,16 @@
       name: '広背筋',
       desc: '背中を大きく広げる筋肉。逆三角形の体型を作ります。',
       els: [document.getElementById('part-back-left'), document.getElementById('part-back-right')],
-      baseWidth: 22,
-      maxAdd: 20,
+      baseWidth: 16,
+      maxAdd: 24,
       count: 0
     },
     abs: {
       name: '腹直筋',
       desc: 'お腹の中心を縦に走る筋肉。腹筋運動で鍛えられます。',
       els: [document.getElementById('part-abs')],
-      baseWidth: 46,
-      maxAdd: 16,
+      baseWidth: 32,
+      maxAdd: 20,
       count: 0
     }
   };
@@ -401,6 +464,7 @@
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   });
 
+  Object.keys(parts).forEach(key => applyGrowth(key));
   loadProgress();
 </script>
 </body>
