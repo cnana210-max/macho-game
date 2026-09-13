@@ -67,6 +67,7 @@
     border-radius: 50%;
     background: var(--skin);
     border: 3px solid var(--skin-shade);
+    z-index: 3;
   }
   .body-part {
     -webkit-appearance: none;
@@ -92,6 +93,7 @@
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease;
+    z-index: 1;
   }
   .arm {
     position: absolute;
@@ -102,9 +104,36 @@
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease, transform 0.25s ease;
+    z-index: 1;
   }
   .arm-left { left: 50%; transform: translateX(calc(-45px - 100%)); transform-origin: top center; }
   .arm-right { left: 50%; transform: translateX(45px); transform-origin: top center; }
+  .shoulder {
+    position: absolute;
+    top: 50px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--skin);
+    border: 3px solid var(--skin-shade);
+    transition: width 0.25s ease, height 0.25s ease;
+    z-index: 2;
+  }
+  .shoulder-left { left: 50%; transform: translateX(-65px); }
+  .shoulder-right { left: 50%; transform: translateX(33px); }
+  .back {
+    position: absolute;
+    top: 150px;
+    width: 22px;
+    height: 50px;
+    border-radius: 10px;
+    background: var(--skin);
+    border: 3px solid var(--skin-shade);
+    transition: width 0.25s ease;
+    z-index: 0;
+  }
+  .back-left { left: 50%; transform: translateX(calc(-45px - 100%)); }
+  .back-right { left: 50%; transform: translateX(45px); }
   .leg {
     position: absolute;
     top: 148px;
@@ -114,6 +143,7 @@
     background: var(--skin);
     border: 3px solid var(--skin-shade);
     transition: width 0.25s ease;
+    z-index: 1;
   }
   .leg-left { left: 50%; transform: translateX(-38px); }
   .leg-right { left: 50%; transform: translateX(6px); }
@@ -139,16 +169,16 @@
     line-height: 1.4;
   }
   .controls {
-    display: flex;
-    gap: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 10px;
   }
   .part-status {
-    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    padding: 14px 6px;
+    padding: 12px 6px;
     border-radius: 18px;
     background: var(--accent);
     color: #fff;
@@ -173,7 +203,11 @@
   <div class="stage">
     <div class="character">
       <div class="head"></div>
+      <button class="body-part shoulder shoulder-left" id="part-shoulder-left" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
+      <button class="body-part shoulder shoulder-right" id="part-shoulder-right" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
       <button class="body-part torso" id="part-chest" data-part="chest" aria-label="胸をタップして鍛える"></button>
+      <button class="body-part back back-left" id="part-back-left" data-part="back" aria-label="背中をタップして鍛える"></button>
+      <button class="body-part back back-right" id="part-back-right" data-part="back" aria-label="背中をタップして鍛える"></button>
       <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える"></button>
       <button class="body-part arm arm-right" id="part-arm-right" data-part="arm" aria-label="腕をタップして鍛える"></button>
       <button class="body-part leg leg-left" id="part-leg-left" data-part="leg" aria-label="脚をタップして鍛える"></button>
@@ -182,7 +216,7 @@
   </div>
   <div class="info" id="info">
     <div class="name">さあ、鍛えよう！</div>
-    <div class="desc">キャラクターの体（胸・腕・脚）をタップして筋トレを始めましょう</div>
+    <div class="desc">キャラクターの体（胸・腕・脚・肩・背中）をタップして筋トレを始めましょう</div>
   </div>
   <div class="controls">
     <div class="part-status">
@@ -196,6 +230,14 @@
     <div class="part-status">
       <span class="btn-label">脚</span>
       <span class="btn-count" id="count-leg">0回</span>
+    </div>
+    <div class="part-status">
+      <span class="btn-label">肩</span>
+      <span class="btn-count" id="count-shoulder">0回</span>
+    </div>
+    <div class="part-status">
+      <span class="btn-label">背中</span>
+      <span class="btn-count" id="count-back">0回</span>
     </div>
   </div>
 </div>
@@ -224,6 +266,23 @@
       baseWidth: 32,
       maxAdd: 22,
       count: 0
+    },
+    shoulder: {
+      name: '三角筋',
+      desc: '肩を丸く覆う筋肉。腕を横に上げる動作で使われます。',
+      els: [document.getElementById('part-shoulder-left'), document.getElementById('part-shoulder-right')],
+      baseWidth: 32,
+      maxAdd: 14,
+      growHeight: true,
+      count: 0
+    },
+    back: {
+      name: '広背筋',
+      desc: '背中を大きく広げる筋肉。逆三角形の体型を作ります。',
+      els: [document.getElementById('part-back-left'), document.getElementById('part-back-right')],
+      baseWidth: 22,
+      maxAdd: 20,
+      count: 0
     }
   };
 
@@ -237,7 +296,10 @@
     const p = parts[part];
     const growth = Math.min(p.count, TAPS_TO_MAX) / TAPS_TO_MAX;
     const width = p.baseWidth + p.maxAdd * growth;
-    p.els.forEach(el => { el.style.width = width + 'px'; });
+    p.els.forEach(el => {
+      el.style.width = width + 'px';
+      if (p.growHeight) el.style.height = width + 'px';
+    });
   }
 
   function saveProgress() {
