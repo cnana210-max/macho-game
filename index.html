@@ -68,6 +68,19 @@
     background: var(--skin);
     border: 3px solid var(--skin-shade);
   }
+  .body-part {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    cursor: pointer;
+    outline: none;
+    touch-action: manipulation;
+  }
+  .body-part:active {
+    filter: brightness(0.88);
+  }
   .torso {
     position: absolute;
     top: 52px;
@@ -129,24 +142,16 @@
     display: flex;
     gap: 10px;
   }
-  .part-btn {
+  .part-status {
     flex: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    padding: 16px 6px;
-    border: none;
+    padding: 14px 6px;
     border-radius: 18px;
     background: var(--accent);
     color: #fff;
-    font-family: inherit;
-    box-shadow: 0 4px 0 var(--accent-dark);
-    transition: transform 0.08s ease, box-shadow 0.08s ease;
-  }
-  .part-btn:active {
-    transform: translateY(4px);
-    box-shadow: 0 0 0 var(--accent-dark);
   }
   .btn-label {
     font-size: clamp(18px, 5vw, 22px);
@@ -168,30 +173,30 @@
   <div class="stage">
     <div class="character">
       <div class="head"></div>
-      <div class="torso" id="part-chest"></div>
-      <div class="arm arm-left" id="part-arm-left"></div>
-      <div class="arm arm-right" id="part-arm-right"></div>
-      <div class="leg leg-left" id="part-leg-left"></div>
-      <div class="leg leg-right" id="part-leg-right"></div>
+      <button class="body-part torso" id="part-chest" data-part="chest" aria-label="胸をタップして鍛える"></button>
+      <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える"></button>
+      <button class="body-part arm arm-right" id="part-arm-right" data-part="arm" aria-label="腕をタップして鍛える"></button>
+      <button class="body-part leg leg-left" id="part-leg-left" data-part="leg" aria-label="脚をタップして鍛える"></button>
+      <button class="body-part leg leg-right" id="part-leg-right" data-part="leg" aria-label="脚をタップして鍛える"></button>
     </div>
   </div>
   <div class="info" id="info">
     <div class="name">さあ、鍛えよう！</div>
-    <div class="desc">下のボタンをタップして筋トレを始めましょう</div>
+    <div class="desc">キャラクターの体（胸・腕・脚）をタップして筋トレを始めましょう</div>
   </div>
   <div class="controls">
-    <button class="part-btn" data-part="chest">
+    <div class="part-status">
       <span class="btn-label">胸</span>
       <span class="btn-count" id="count-chest">0回</span>
-    </button>
-    <button class="part-btn" data-part="arm">
+    </div>
+    <div class="part-status">
       <span class="btn-label">腕</span>
       <span class="btn-count" id="count-arm">0回</span>
-    </button>
-    <button class="part-btn" data-part="leg">
+    </div>
+    <div class="part-status">
       <span class="btn-label">脚</span>
       <span class="btn-count" id="count-leg">0回</span>
-    </button>
+    </div>
   </div>
 </div>
 <script>
@@ -259,7 +264,7 @@
     }
   }
 
-  document.querySelectorAll('.part-btn').forEach(btn => {
+  document.querySelectorAll('.body-part').forEach(btn => {
     btn.addEventListener('click', () => {
       const part = btn.dataset.part;
       const p = parts[part];
