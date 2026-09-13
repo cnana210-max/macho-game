@@ -9,15 +9,16 @@
     color-scheme: light;
     --bg-top: #fff2e0;
     --bg-bottom: #ffd9a8;
-    --skin: #f2b980;
-    --skin-shade: #d99b5f;
+    --skin: #edc9a0;
+    --skin-shade: #d9ac79;
     --accent: #ff6b35;
     --accent-dark: #e0501d;
     --ink: #3a2a1a;
     --panel: #ffffff;
-    --mask-red: #d81e3f;
-    --mask-red-dark: #a91530;
-    --mask-gold: #f0b429;
+    --red: #e23b2e;
+    --gold: #f5c518;
+    --teal: #3e8e8a;
+    --outline: #1c1a17;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -68,33 +69,54 @@
     width: 56px;
     height: 56px;
     border-radius: 50%;
-    background: linear-gradient(90deg,
-      var(--mask-gold) 0%, var(--mask-gold) 14%,
-      var(--mask-red) 14%, var(--mask-red) 86%,
-      var(--mask-gold) 86%, var(--mask-gold) 100%);
-    border: 3px solid var(--mask-red-dark);
+    background: var(--red);
+    border: 4px solid var(--outline);
     z-index: 3;
   }
   .mask-eye {
     position: absolute;
-    top: 20px;
-    width: 10px;
+    top: 19px;
+    width: 14px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 2.5px solid var(--outline);
+  }
+  .mask-eye-left { left: 8px; }
+  .mask-eye-right { right: 8px; }
+  .mask-eye::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 6px;
     height: 6px;
     border-radius: 50%;
     background: #fff;
-    border: 1.5px solid var(--ink);
+    border: 1.5px solid var(--outline);
   }
-  .mask-eye-left { left: 10px; }
-  .mask-eye-right { right: 10px; }
   .mask-mouth {
     position: absolute;
-    bottom: 8px;
+    bottom: 6px;
     left: 50%;
     transform: translateX(-50%);
-    width: 16px;
-    height: 7px;
-    border-radius: 0 0 8px 8px;
-    background: var(--mask-red-dark);
+    width: 20px;
+    height: 11px;
+    border-radius: 0 0 10px 10px;
+    background: var(--gold);
+    border: 2.5px solid var(--outline);
+  }
+  .mask-mouth::after {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 11px;
+    height: 5px;
+    border-radius: 0 0 6px 6px;
+    background: var(--outline);
   }
   .body-part {
     -webkit-appearance: none;
@@ -118,7 +140,7 @@
     height: 100px;
     border-radius: 20px 20px 26px 26px;
     background: var(--skin);
-    border: 3px solid var(--skin-shade);
+    border: 4px solid var(--outline);
     transition: width 0.25s ease;
     z-index: 1;
   }
@@ -129,12 +151,24 @@
     height: 90px;
     border-radius: 10px;
     background: var(--skin);
-    border: 3px solid var(--skin-shade);
+    border: 4px solid var(--outline);
     transition: width 0.25s ease, transform 0.25s ease;
     z-index: 1;
   }
   .arm-left { left: 50%; transform: translateX(calc(-35px - 100%)) rotate(-8deg); transform-origin: top center; }
   .arm-right { left: 50%; transform: translateX(35px) rotate(8deg); transform-origin: top center; }
+  .wristband {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    height: 11px;
+    background: var(--teal);
+    border: 3px solid var(--outline);
+    border-radius: 4px;
+    pointer-events: none;
+  }
   .shoulder {
     position: absolute;
     top: 50px;
@@ -142,7 +176,7 @@
     height: 20px;
     border-radius: 50%;
     background: var(--skin);
-    border: 3px solid var(--skin-shade);
+    border: 4px solid var(--outline);
     transition: width 0.25s ease, height 0.25s ease;
     z-index: 2;
   }
@@ -155,7 +189,7 @@
     height: 50px;
     border-radius: 10px;
     background: var(--skin);
-    border: 3px solid var(--skin-shade);
+    border: 4px solid var(--outline);
     transition: width 0.25s ease;
     z-index: 2;
   }
@@ -168,7 +202,7 @@
     height: 100px;
     border-radius: 0 0 12px 12px;
     background: var(--skin);
-    border: 3px solid var(--skin-shade);
+    border: 4px solid var(--outline);
     transition: width 0.25s ease;
     z-index: 1;
   }
@@ -182,8 +216,8 @@
     width: 32px;
     height: 36px;
     border-radius: 10px;
-    background: var(--skin-shade);
-    border: 3px solid var(--skin-shade);
+    background: var(--skin);
+    border: 4px solid var(--outline);
     transition: width 0.25s ease;
     z-index: 2;
   }
@@ -194,22 +228,22 @@
     transform: translateX(-50%);
     width: 84px;
     height: 22px;
-    background: var(--mask-red);
-    border: 2px solid var(--mask-gold);
+    background: linear-gradient(var(--gold) 0 6px, var(--red) 6px 100%);
+    border: 4px solid var(--outline);
     border-radius: 8px;
     pointer-events: none;
     z-index: 5;
   }
   .boot {
     position: absolute;
-    top: 222px;
-    width: 38px;
-    height: 20px;
-    background: var(--mask-gold);
-    border: 2px solid var(--mask-red-dark);
-    border-radius: 6px;
+    top: 196px;
+    width: 36px;
+    height: 52px;
+    background: linear-gradient(var(--red) 0 8px, var(--gold) 8px 100%);
+    border: 4px solid var(--outline);
+    border-radius: 8px 8px 6px 6px;
     pointer-events: none;
-    z-index: 5;
+    z-index: 3;
   }
   .boot-left { left: 50%; transform: translateX(-38px); }
   .boot-right { left: 50%; transform: translateX(6px); }
@@ -279,8 +313,8 @@
     opacity: 1;
   }
   @media (max-height: 640px) {
-    .character { width: 180px; height: 246px; }
-    .stage { min-height: 246px; padding: 6px 0 12px; }
+    .character { width: 180px; height: 252px; }
+    .stage { min-height: 252px; padding: 6px 0 12px; }
     h1 { margin: 2px 0 8px; }
     .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
     .reset-wrap { margin-top: 12px; }
@@ -303,8 +337,12 @@
       <button class="body-part abs" id="part-abs" data-part="abs" aria-label="腹をタップして鍛える"></button>
       <button class="body-part back back-left" id="part-back-left" data-part="back" aria-label="背中をタップして鍛える"></button>
       <button class="body-part back back-right" id="part-back-right" data-part="back" aria-label="背中をタップして鍛える"></button>
-      <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える"></button>
-      <button class="body-part arm arm-right" id="part-arm-right" data-part="arm" aria-label="腕をタップして鍛える"></button>
+      <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える">
+        <span class="wristband"></span>
+      </button>
+      <button class="body-part arm arm-right" id="part-arm-right" data-part="arm" aria-label="腕をタップして鍛える">
+        <span class="wristband"></span>
+      </button>
       <div class="trunks"></div>
       <button class="body-part leg leg-left" id="part-leg-left" data-part="leg" aria-label="脚をタップして鍛える"></button>
       <button class="body-part leg leg-right" id="part-leg-right" data-part="leg" aria-label="脚をタップして鍛える"></button>
