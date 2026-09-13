@@ -226,12 +226,37 @@
   const infoDesc = document.querySelector('#info .desc');
   const STEP = 3;
   const TAPS_TO_MAX = 15;
+  const STORAGE_KEY = 'macho-game-progress';
 
   function applyGrowth(part) {
     const p = parts[part];
     const growth = Math.min(p.count, TAPS_TO_MAX) / TAPS_TO_MAX;
     const width = p.baseWidth + p.maxAdd * growth;
     p.els.forEach(el => { el.style.width = width + 'px'; });
+  }
+
+  function saveProgress() {
+    const data = {};
+    Object.keys(parts).forEach(key => { data[key] = parts[key].count; });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+
+  function loadProgress() {
+    let saved;
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) { saved = null; }
+    if (!saved) return;
+    Object.keys(parts).forEach(key => {
+      if (typeof saved[key] === 'number' && saved[key] > 0) {
+        parts[key].count = saved[key];
+        document.getElementById('count-' + key).textContent = saved[key] + '回';
+        applyGrowth(key);
+      }
+    });
+    const total = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
+    if (total > 0) {
+      infoName.textContent = 'おかえりなさい！';
+      infoDesc.textContent = 'ここまで育てたマッチョです。続きを鍛えましょう';
+    }
   }
 
   document.querySelectorAll('.part-btn').forEach(btn => {
@@ -243,8 +268,11 @@
       applyGrowth(part);
       infoName.textContent = p.name;
       infoDesc.textContent = p.desc;
+      saveProgress();
     });
   });
+
+  loadProgress();
 </script>
 </body>
 </html>
