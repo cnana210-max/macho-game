@@ -9,8 +9,8 @@
     color-scheme: light;
     --bg-top: #fff2e0;
     --bg-bottom: #ffd9a8;
-    --skin: #edc9a0;
-    --skin-shade: #d9ac79;
+    --skin: #e8b98a;
+    --skin-shade: #d1985f;
     --accent: #ff6b35;
     --accent-dark: #e0501d;
     --ink: #3a2a1a;
@@ -53,200 +53,41 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 260px;
+    min-height: 300px;
     padding: 12px 0;
   }
   .character {
-    position: relative;
     width: 220px;
-    height: 260px;
+    height: 300px;
+    overflow: visible;
   }
-  .head {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--red);
-    border: 4px solid var(--outline);
-    z-index: 3;
+  .outlined {
+    stroke: var(--outline);
+    stroke-width: 4.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
   }
-  .mask-eye {
-    position: absolute;
-    top: 19px;
-    width: 14px;
-    height: 10px;
-    border-radius: 50%;
-    background: var(--gold);
-    border: 2.5px solid var(--outline);
-  }
-  .mask-eye-left { left: 8px; }
-  .mask-eye-right { right: 8px; }
-  .mask-eye::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #fff;
-    border: 1.5px solid var(--outline);
-  }
-  .mask-mouth {
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 11px;
-    border-radius: 0 0 10px 10px;
-    background: var(--gold);
-    border: 2.5px solid var(--outline);
-  }
-  .mask-mouth::after {
-    content: '';
-    position: absolute;
-    top: 3px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 11px;
-    height: 5px;
-    border-radius: 0 0 6px 6px;
-    background: var(--outline);
-  }
-  .body-part {
-    -webkit-appearance: none;
-    appearance: none;
-    margin: 0;
-    padding: 0;
-    font: inherit;
+  .skin { fill: var(--skin); }
+  .tap-shape {
     cursor: pointer;
-    outline: none;
     touch-action: manipulation;
   }
-  .body-part:active {
-    filter: brightness(0.88);
+  .tap-shape:active { filter: brightness(0.9); }
+  .grown {
+    transform-box: fill-box;
   }
-  .torso {
-    position: absolute;
-    top: 52px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 70px;
-    height: 100px;
-    border-radius: 20px 20px 26px 26px;
-    background: var(--skin);
-    border: 4px solid var(--outline);
-    transition: width 0.25s ease;
-    z-index: 1;
-  }
-  .arm {
-    position: absolute;
-    top: 62px;
-    width: 16px;
-    height: 90px;
-    border-radius: 10px;
-    background: var(--skin);
-    border: 4px solid var(--outline);
-    transition: width 0.25s ease, transform 0.25s ease;
-    z-index: 1;
-  }
-  .arm-left { left: 50%; transform: translateX(calc(-35px - 100%)) rotate(-8deg); transform-origin: top center; }
-  .arm-right { left: 50%; transform: translateX(35px) rotate(8deg); transform-origin: top center; }
-  .wristband {
-    position: absolute;
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    height: 11px;
-    background: var(--teal);
-    border: 3px solid var(--outline);
-    border-radius: 4px;
-    pointer-events: none;
-  }
-  .shoulder {
-    position: absolute;
-    top: 50px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--skin);
-    border: 4px solid var(--outline);
-    transition: width 0.25s ease, height 0.25s ease;
-    z-index: 2;
-  }
-  .shoulder-left { left: 50%; transform: translateX(-53px); }
-  .shoulder-right { left: 50%; transform: translateX(33px); }
-  .back {
-    position: absolute;
-    top: 150px;
-    width: 16px;
-    height: 50px;
-    border-radius: 10px;
-    background: var(--skin);
-    border: 4px solid var(--outline);
-    transition: width 0.25s ease;
-    z-index: 2;
-  }
-  .back-left { left: 50%; transform: translateX(calc(-35px - 100%)); }
-  .back-right { left: 50%; transform: translateX(35px); }
-  .leg {
-    position: absolute;
-    top: 148px;
-    width: 22px;
-    height: 100px;
-    border-radius: 0 0 12px 12px;
-    background: var(--skin);
-    border: 4px solid var(--outline);
-    transition: width 0.25s ease;
-    z-index: 1;
-  }
-  .leg-left { left: 50%; transform: translateX(-38px); }
-  .leg-right { left: 50%; transform: translateX(6px); }
-  .abs {
-    position: absolute;
-    top: 112px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 32px;
-    height: 36px;
-    border-radius: 10px;
-    background: var(--skin);
-    border: 4px solid var(--outline);
-    transition: width 0.25s ease;
-    z-index: 2;
-  }
-  .trunks {
-    position: absolute;
-    top: 148px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 84px;
-    height: 22px;
-    background: linear-gradient(var(--gold) 0 6px, var(--red) 6px 100%);
-    border: 4px solid var(--outline);
-    border-radius: 8px;
-    pointer-events: none;
-    z-index: 5;
-  }
-  .boot {
-    position: absolute;
-    top: 196px;
-    width: 36px;
-    height: 52px;
-    background: linear-gradient(var(--red) 0 8px, var(--gold) 8px 100%);
-    border: 4px solid var(--outline);
-    border-radius: 8px 8px 6px 6px;
-    pointer-events: none;
-    z-index: 3;
-  }
-  .boot-left { left: 50%; transform: translateX(-38px); }
-  .boot-right { left: 50%; transform: translateX(6px); }
+  .torso-shape { transform-origin: 50% 0%; transform: scaleX(var(--grow, 1)); }
+  .abs-shape { transform-origin: 50% 0%; transform: scale(var(--grow, 1)); }
+  .shoulder-left-shape { transform-origin: 100% 50%; transform: scale(var(--grow, 1)); }
+  .shoulder-right-shape { transform-origin: 0% 50%; transform: scale(var(--grow, 1)); }
+  .back-left-shape { transform-origin: 100% 50%; transform: scaleX(var(--grow, 1)); }
+  .back-right-shape { transform-origin: 0% 50%; transform: scaleX(var(--grow, 1)); }
+  .leg-left-shape, .leg-right-shape { transform-origin: 0% 0%; transform: scaleX(var(--grow, 1)); }
+  .arm-left-shape { transform-origin: 100% 0%; transform: rotate(8deg) scaleX(var(--grow, 1)); }
+  .arm-right-shape { transform-origin: 0% 0%; transform: rotate(-8deg) scaleX(var(--grow, 1)); }
+  .wristband-left-shape { transform-origin: 100% 0%; transform: rotate(8deg) scaleX(var(--grow, 1)); }
+  .wristband-right-shape { transform-origin: 0% 0%; transform: rotate(-8deg) scaleX(var(--grow, 1)); }
   .info {
     background: var(--panel);
     border-radius: 16px;
@@ -313,8 +154,8 @@
     opacity: 1;
   }
   @media (max-height: 640px) {
-    .character { width: 180px; height: 252px; }
-    .stage { min-height: 252px; padding: 6px 0 12px; }
+    .character { width: 165px; height: 225px; }
+    .stage { min-height: 225px; padding: 6px 0 12px; }
     h1 { margin: 2px 0 8px; }
     .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
     .reset-wrap { margin-top: 12px; }
@@ -325,30 +166,51 @@
 <div class="app">
   <h1>マッチョ育成ゲーム</h1>
   <div class="stage">
-    <div class="character">
-      <div class="head">
-        <span class="mask-eye mask-eye-left"></span>
-        <span class="mask-eye mask-eye-right"></span>
-        <span class="mask-mouth"></span>
-      </div>
-      <button class="body-part shoulder shoulder-left" id="part-shoulder-left" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
-      <button class="body-part shoulder shoulder-right" id="part-shoulder-right" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
-      <button class="body-part torso" id="part-chest" data-part="chest" aria-label="胸をタップして鍛える"></button>
-      <button class="body-part abs" id="part-abs" data-part="abs" aria-label="腹をタップして鍛える"></button>
-      <button class="body-part back back-left" id="part-back-left" data-part="back" aria-label="背中をタップして鍛える"></button>
-      <button class="body-part back back-right" id="part-back-right" data-part="back" aria-label="背中をタップして鍛える"></button>
-      <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える">
-        <span class="wristband"></span>
-      </button>
-      <button class="body-part arm arm-right" id="part-arm-right" data-part="arm" aria-label="腕をタップして鍛える">
-        <span class="wristband"></span>
-      </button>
-      <div class="trunks"></div>
-      <button class="body-part leg leg-left" id="part-leg-left" data-part="leg" aria-label="脚をタップして鍛える"></button>
-      <button class="body-part leg leg-right" id="part-leg-right" data-part="leg" aria-label="脚をタップして鍛える"></button>
-      <div class="boot boot-left"></div>
-      <div class="boot boot-right"></div>
-    </div>
+    <svg class="character" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
+      <rect x="97" y="48" width="26" height="18" rx="9" class="skin" />
+
+      <path class="grown torso-shape outlined skin tap-shape" data-part="chest"
+        d="M86,58 C78,68 80,80 83,88 C80,105 78,122 81,138 C79,148 78,158 87,165
+           L133,165 C142,158 141,148 139,138 C142,122 140,105 137,88
+           C140,80 142,68 134,58 C122,50 98,50 86,58 Z" />
+
+      <rect class="grown back-left-shape outlined skin tap-shape" data-part="back" x="66" y="148" width="16" height="20" rx="8" />
+      <rect class="grown back-right-shape outlined skin tap-shape" data-part="back" x="138" y="148" width="16" height="20" rx="8" />
+
+      <rect class="grown abs-shape outlined tap-shape" data-part="abs" x="92" y="120" width="36" height="32" rx="16" fill="var(--skin-shade)" />
+
+      <rect class="grown leg-left-shape outlined skin tap-shape" data-part="leg" x="82" y="168" width="24" height="95" rx="12" />
+      <rect class="grown leg-right-shape outlined skin tap-shape" data-part="leg" x="114" y="168" width="24" height="95" rx="12" />
+
+      <rect x="76" y="163" width="68" height="26" rx="12" fill="var(--red)" class="outlined" pointer-events="none" />
+      <rect x="76" y="163" width="68" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
+
+      <rect x="78" y="218" width="30" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
+      <rect x="78" y="218" width="30" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <rect x="112" y="218" width="30" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
+      <rect x="112" y="218" width="30" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
+
+      <circle class="grown shoulder-left-shape outlined skin tap-shape" data-part="shoulder" cx="76" cy="64" r="18" />
+      <circle class="grown shoulder-right-shape outlined skin tap-shape" data-part="shoulder" cx="144" cy="64" r="18" />
+
+      <rect class="grown arm-left-shape outlined skin tap-shape" data-part="arm" x="50" y="66" width="16" height="95" rx="8" />
+      <rect class="grown arm-right-shape outlined skin tap-shape" data-part="arm" x="154" y="66" width="16" height="95" rx="8" />
+
+      <rect class="grown wristband-left-shape outlined" x="50" y="140" width="16" height="11" rx="4" fill="var(--teal)" pointer-events="none" />
+      <rect class="grown wristband-right-shape outlined" x="154" y="140" width="16" height="11" rx="4" fill="var(--teal)" pointer-events="none" />
+
+      <rect x="107" y="8" width="6" height="32" rx="3" fill="var(--gold)" pointer-events="none" />
+      <ellipse cx="110" cy="34" rx="27" ry="26" fill="var(--red)" class="outlined" pointer-events="none" />
+
+      <ellipse cx="95" cy="32" rx="8" ry="6" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <ellipse cx="125" cy="32" rx="8" ry="6" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <circle cx="95" cy="32" r="3.5" fill="#fff" pointer-events="none" />
+      <circle cx="125" cy="32" r="3.5" fill="#fff" pointer-events="none" />
+
+      <path d="M99,45 C99,50 104,54 110,54 C116,54 121,50 121,45 C121,52 116,58 110,58 C104,58 99,52 99,45 Z"
+        fill="var(--gold)" class="outlined" pointer-events="none" />
+      <ellipse cx="110" cy="49" rx="5.5" ry="2.5" fill="var(--outline)" pointer-events="none" />
+    </svg>
   </div>
   <div class="info" id="info">
     <div class="name">さあ、鍛えよう！</div>
@@ -385,72 +247,73 @@
   </div>
 </div>
 <script>
+  function elsFor(part) {
+    const shapes = Array.from(document.querySelectorAll('[data-part="' + part + '"]'));
+    const bands = part === 'arm' ? Array.from(document.querySelectorAll('.wristband-left-shape, .wristband-right-shape')) : [];
+    return shapes.concat(bands);
+  }
+
   const parts = {
     chest: {
       name: '大胸筋',
       desc: '胸の中心を覆う大きな筋肉。押す動作で使われます。',
-      els: [document.getElementById('part-chest')],
-      baseWidth: 70,
-      maxAdd: 50,
+      els: elsFor('chest'),
+      baseWidth: 100,
+      maxAdd: 70,
       count: 0
     },
     arm: {
       name: '上腕二頭筋',
       desc: '腕の力こぶ。ものを持ち上げる動作で使われます。',
-      els: [document.getElementById('part-arm-left'), document.getElementById('part-arm-right')],
-      baseWidth: 16,
-      maxAdd: 26,
+      els: elsFor('arm'),
+      baseWidth: 100,
+      maxAdd: 90,
       count: 0
     },
     leg: {
       name: '大腿四頭筋',
       desc: '太ももの前側の筋肉。歩く・走るときに使われます。',
-      els: [document.getElementById('part-leg-left'), document.getElementById('part-leg-right')],
-      baseWidth: 22,
-      maxAdd: 30,
+      els: elsFor('leg'),
+      baseWidth: 100,
+      maxAdd: 80,
       count: 0
     },
     shoulder: {
       name: '三角筋',
       desc: '肩を丸く覆う筋肉。腕を横に上げる動作で使われます。',
-      els: [document.getElementById('part-shoulder-left'), document.getElementById('part-shoulder-right')],
-      baseWidth: 20,
-      maxAdd: 20,
-      growHeight: true,
+      els: elsFor('shoulder'),
+      baseWidth: 100,
+      maxAdd: 90,
       count: 0
     },
     back: {
       name: '広背筋',
       desc: '背中を大きく広げる筋肉。逆三角形の体型を作ります。',
-      els: [document.getElementById('part-back-left'), document.getElementById('part-back-right')],
-      baseWidth: 16,
-      maxAdd: 24,
+      els: elsFor('back'),
+      baseWidth: 100,
+      maxAdd: 90,
       count: 0
     },
     abs: {
       name: '腹直筋',
       desc: 'お腹の中心を縦に走る筋肉。腹筋運動で鍛えられます。',
-      els: [document.getElementById('part-abs')],
-      baseWidth: 32,
-      maxAdd: 20,
+      els: elsFor('abs'),
+      baseWidth: 100,
+      maxAdd: 60,
       count: 0
     }
   };
 
   const infoName = document.querySelector('#info .name');
   const infoDesc = document.querySelector('#info .desc');
-  const STEP = 3;
   const TAPS_TO_MAX = 15;
   const STORAGE_KEY = 'macho-game-progress';
 
   function applyGrowth(part) {
     const p = parts[part];
     const growth = Math.min(p.count, TAPS_TO_MAX) / TAPS_TO_MAX;
-    const width = p.baseWidth + p.maxAdd * growth;
-    p.els.forEach(el => {
-      el.style.width = width + 'px';
-      if (p.growHeight) el.style.height = width + 'px';
-    });
+    const ratio = (p.baseWidth + p.maxAdd * growth) / p.baseWidth;
+    p.els.forEach(el => { el.style.setProperty('--grow', ratio); });
   }
 
   function saveProgress() {
@@ -477,9 +340,9 @@
     }
   }
 
-  document.querySelectorAll('.body-part').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const part = btn.dataset.part;
+  document.querySelectorAll('.tap-shape').forEach(shape => {
+    shape.addEventListener('click', () => {
+      const part = shape.dataset.part;
       const p = parts[part];
       p.count += 1;
       document.getElementById('count-' + part).textContent = p.count + '回';
