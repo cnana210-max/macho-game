@@ -147,6 +147,19 @@
   }
   .leg-left { left: 50%; transform: translateX(-38px); }
   .leg-right { left: 50%; transform: translateX(6px); }
+  .abs {
+    position: absolute;
+    top: 112px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 46px;
+    height: 36px;
+    border-radius: 12px;
+    background: var(--skin-shade);
+    border: 3px solid var(--skin-shade);
+    transition: width 0.25s ease;
+    z-index: 2;
+  }
   .info {
     background: var(--panel);
     border-radius: 16px;
@@ -227,6 +240,7 @@
       <button class="body-part shoulder shoulder-left" id="part-shoulder-left" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
       <button class="body-part shoulder shoulder-right" id="part-shoulder-right" data-part="shoulder" aria-label="肩をタップして鍛える"></button>
       <button class="body-part torso" id="part-chest" data-part="chest" aria-label="胸をタップして鍛える"></button>
+      <button class="body-part abs" id="part-abs" data-part="abs" aria-label="腹をタップして鍛える"></button>
       <button class="body-part back back-left" id="part-back-left" data-part="back" aria-label="背中をタップして鍛える"></button>
       <button class="body-part back back-right" id="part-back-right" data-part="back" aria-label="背中をタップして鍛える"></button>
       <button class="body-part arm arm-left" id="part-arm-left" data-part="arm" aria-label="腕をタップして鍛える"></button>
@@ -237,7 +251,7 @@
   </div>
   <div class="info" id="info">
     <div class="name">さあ、鍛えよう！</div>
-    <div class="desc">キャラクターの体（胸・腕・脚・肩・背中）をタップして筋トレを始めましょう</div>
+    <div class="desc">キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう</div>
   </div>
   <div class="controls">
     <div class="part-status">
@@ -259,6 +273,10 @@
     <div class="part-status">
       <span class="btn-label">背中</span>
       <span class="btn-count" id="count-back">0回</span>
+    </div>
+    <div class="part-status">
+      <span class="btn-label">腹</span>
+      <span class="btn-count" id="count-abs">0回</span>
     </div>
   </div>
   <div class="reset-wrap">
@@ -306,6 +324,14 @@
       els: [document.getElementById('part-back-left'), document.getElementById('part-back-right')],
       baseWidth: 22,
       maxAdd: 20,
+      count: 0
+    },
+    abs: {
+      name: '腹直筋',
+      desc: 'お腹の中心を縦に走る筋肉。腹筋運動で鍛えられます。',
+      els: [document.getElementById('part-abs')],
+      baseWidth: 46,
+      maxAdd: 16,
       count: 0
     }
   };
@@ -371,7 +397,7 @@
       applyGrowth(key);
     });
     infoName.textContent = 'さあ、鍛えよう！';
-    infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中）をタップして筋トレを始めましょう';
+    infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう';
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   });
 
