@@ -63,31 +63,29 @@
   }
   .outlined {
     stroke: var(--outline);
-    stroke-width: 4.5;
+    stroke-width: 5;
     stroke-linejoin: round;
     stroke-linecap: round;
     vector-effect: non-scaling-stroke;
   }
-  .skin { fill: var(--skin); }
-  .tap-shape {
+  .body-silhouette {
+    fill: var(--skin);
+    transition: d 0.3s ease;
+  }
+  .detail-line {
+    stroke: var(--outline);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    fill: none;
+    opacity: 0.55;
+  }
+  .tap-zone {
+    fill: transparent;
     cursor: pointer;
     touch-action: manipulation;
+    pointer-events: all;
   }
-  .tap-shape:active { filter: brightness(0.9); }
-  .grown {
-    transform-box: fill-box;
-  }
-  .torso-shape { transform-origin: 50% 0%; transform: scaleX(var(--grow, 1)); }
-  .abs-shape { transform-origin: 50% 0%; transform: scale(var(--grow, 1)); }
-  .shoulder-left-shape { transform-origin: 100% 50%; transform: scale(var(--grow, 1)); }
-  .shoulder-right-shape { transform-origin: 0% 50%; transform: scale(var(--grow, 1)); }
-  .back-left-shape { transform-origin: 100% 50%; transform: scaleX(var(--grow, 1)); }
-  .back-right-shape { transform-origin: 0% 50%; transform: scaleX(var(--grow, 1)); }
-  .leg-left-shape, .leg-right-shape { transform-origin: 0% 0%; transform: scaleX(var(--grow, 1)); }
-  .arm-left-shape { transform-origin: 100% 0%; transform: rotate(8deg) scaleX(var(--grow, 1)); }
-  .arm-right-shape { transform-origin: 0% 0%; transform: rotate(-8deg) scaleX(var(--grow, 1)); }
-  .wristband-left-shape { transform-origin: 100% 0%; transform: rotate(8deg) scaleX(var(--grow, 1)); }
-  .wristband-right-shape { transform-origin: 0% 0%; transform: rotate(-8deg) scaleX(var(--grow, 1)); }
+  .tap-zone:active ~ .body-silhouette { filter: brightness(0.97); }
   .info {
     background: var(--panel);
     border-radius: 16px;
@@ -167,37 +165,25 @@
   <h1>マッチョ育成ゲーム</h1>
   <div class="stage">
     <svg class="character" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
-      <rect x="97" y="48" width="26" height="18" rx="9" class="skin" />
+      <rect x="97" y="48" width="26" height="18" fill="var(--skin)" />
 
-      <path class="grown torso-shape outlined skin tap-shape" data-part="chest"
-        d="M86,58 C78,68 80,80 83,88 C80,105 78,122 81,138 C79,148 78,158 87,165
-           L133,165 C142,158 141,148 139,138 C142,122 140,105 137,88
-           C140,80 142,68 134,58 C122,50 98,50 86,58 Z" />
+      <path id="bodySilhouette" class="body-silhouette outlined" d="" />
 
-      <rect class="grown back-left-shape outlined skin tap-shape" data-part="back" x="66" y="148" width="16" height="20" rx="8" />
-      <rect class="grown back-right-shape outlined skin tap-shape" data-part="back" x="138" y="148" width="16" height="20" rx="8" />
+      <path class="detail-line" d="M110,66 L110,94" />
+      <path class="detail-line" d="M100,128 L120,128" />
+      <path class="detail-line" d="M100,138 L120,138" />
+      <path class="detail-line" d="M100,148 L120,148" />
 
-      <rect class="grown abs-shape outlined tap-shape" data-part="abs" x="92" y="120" width="36" height="32" rx="16" fill="var(--skin-shade)" />
+      <rect x="74" y="163" width="72" height="26" rx="12" fill="var(--red)" class="outlined" pointer-events="none" />
+      <rect x="74" y="163" width="72" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
 
-      <rect class="grown leg-left-shape outlined skin tap-shape" data-part="leg" x="82" y="168" width="24" height="95" rx="12" />
-      <rect class="grown leg-right-shape outlined skin tap-shape" data-part="leg" x="114" y="168" width="24" height="95" rx="12" />
+      <rect x="72" y="222" width="34" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
+      <rect x="72" y="222" width="34" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <rect x="114" y="222" width="34" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
+      <rect x="114" y="222" width="34" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
 
-      <rect x="76" y="163" width="68" height="26" rx="12" fill="var(--red)" class="outlined" pointer-events="none" />
-      <rect x="76" y="163" width="68" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
-
-      <rect x="78" y="218" width="30" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
-      <rect x="78" y="218" width="30" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
-      <rect x="112" y="218" width="30" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
-      <rect x="112" y="218" width="30" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
-
-      <circle class="grown shoulder-left-shape outlined skin tap-shape" data-part="shoulder" cx="76" cy="64" r="18" />
-      <circle class="grown shoulder-right-shape outlined skin tap-shape" data-part="shoulder" cx="144" cy="64" r="18" />
-
-      <rect class="grown arm-left-shape outlined skin tap-shape" data-part="arm" x="50" y="66" width="16" height="95" rx="8" />
-      <rect class="grown arm-right-shape outlined skin tap-shape" data-part="arm" x="154" y="66" width="16" height="95" rx="8" />
-
-      <rect class="grown wristband-left-shape outlined" x="50" y="140" width="16" height="11" rx="4" fill="var(--teal)" pointer-events="none" />
-      <rect class="grown wristband-right-shape outlined" x="154" y="140" width="16" height="11" rx="4" fill="var(--teal)" pointer-events="none" />
+      <rect x="40" y="148" width="26" height="12" rx="5" fill="var(--teal)" class="outlined" pointer-events="none" />
+      <rect x="154" y="148" width="26" height="12" rx="5" fill="var(--teal)" class="outlined" pointer-events="none" />
 
       <rect x="107" y="8" width="6" height="32" rx="3" fill="var(--gold)" pointer-events="none" />
       <ellipse cx="110" cy="34" rx="27" ry="26" fill="var(--red)" class="outlined" pointer-events="none" />
@@ -210,6 +196,17 @@
       <path d="M99,45 C99,50 104,54 110,54 C116,54 121,50 121,45 C121,52 116,58 110,58 C104,58 99,52 99,45 Z"
         fill="var(--gold)" class="outlined" pointer-events="none" />
       <ellipse cx="110" cy="49" rx="5.5" ry="2.5" fill="var(--outline)" pointer-events="none" />
+
+      <rect class="tap-zone" data-part="shoulder" x="38" y="50" width="47" height="42" />
+      <rect class="tap-zone" data-part="shoulder" x="135" y="50" width="47" height="42" />
+      <rect class="tap-zone" data-part="chest" x="90" y="58" width="40" height="57" />
+      <rect class="tap-zone" data-part="back" x="75" y="95" width="10" height="73" />
+      <rect class="tap-zone" data-part="back" x="135" y="95" width="10" height="73" />
+      <rect class="tap-zone" data-part="arm" x="28" y="90" width="47" height="76" />
+      <rect class="tap-zone" data-part="arm" x="145" y="90" width="47" height="76" />
+      <rect class="tap-zone" data-part="abs" x="85" y="115" width="50" height="53" />
+      <rect class="tap-zone" data-part="leg" x="58" y="168" width="52" height="100" />
+      <rect class="tap-zone" data-part="leg" x="110" y="168" width="52" height="100" />
     </svg>
   </div>
   <div class="info" id="info">
@@ -247,73 +244,68 @@
   </div>
 </div>
 <script>
-  function elsFor(part) {
-    const shapes = Array.from(document.querySelectorAll('[data-part="' + part + '"]'));
-    const bands = part === 'arm' ? Array.from(document.querySelectorAll('.wristband-left-shape, .wristband-right-shape')) : [];
-    return shapes.concat(bands);
-  }
-
   const parts = {
-    chest: {
-      name: '大胸筋',
-      desc: '胸の中心を覆う大きな筋肉。押す動作で使われます。',
-      els: elsFor('chest'),
-      baseWidth: 100,
-      maxAdd: 70,
-      count: 0
-    },
-    arm: {
-      name: '上腕二頭筋',
-      desc: '腕の力こぶ。ものを持ち上げる動作で使われます。',
-      els: elsFor('arm'),
-      baseWidth: 100,
-      maxAdd: 90,
-      count: 0
-    },
-    leg: {
-      name: '大腿四頭筋',
-      desc: '太ももの前側の筋肉。歩く・走るときに使われます。',
-      els: elsFor('leg'),
-      baseWidth: 100,
-      maxAdd: 80,
-      count: 0
-    },
-    shoulder: {
-      name: '三角筋',
-      desc: '肩を丸く覆う筋肉。腕を横に上げる動作で使われます。',
-      els: elsFor('shoulder'),
-      baseWidth: 100,
-      maxAdd: 90,
-      count: 0
-    },
-    back: {
-      name: '広背筋',
-      desc: '背中を大きく広げる筋肉。逆三角形の体型を作ります。',
-      els: elsFor('back'),
-      baseWidth: 100,
-      maxAdd: 90,
-      count: 0
-    },
-    abs: {
-      name: '腹直筋',
-      desc: 'お腹の中心を縦に走る筋肉。腹筋運動で鍛えられます。',
-      els: elsFor('abs'),
-      baseWidth: 100,
-      maxAdd: 60,
-      count: 0
-    }
+    chest: { name: '大胸筋', desc: '胸の中心を覆う大きな筋肉。押す動作で使われます。', count: 0 },
+    arm: { name: '上腕二頭筋', desc: '腕の力こぶ。ものを持ち上げる動作で使われます。', count: 0 },
+    leg: { name: '大腿四頭筋', desc: '太ももの前側の筋肉。歩く・走るときに使われます。', count: 0 },
+    shoulder: { name: '三角筋', desc: '肩を丸く覆う筋肉。腕を横に上げる動作で使われます。', count: 0 },
+    back: { name: '広背筋', desc: '背中を大きく広げる筋肉。逆三角形の体型を作ります。', count: 0 },
+    abs: { name: '腹直筋', desc: 'お腹の中心を縦に走る筋肉。腹筋運動で鍛えられます。', count: 0 }
   };
 
   const infoName = document.querySelector('#info .name');
   const infoDesc = document.querySelector('#info .desc');
-  const TAPS_TO_MAX = 15;
+  const bodyEl = document.getElementById('bodySilhouette');
   const STORAGE_KEY = 'macho-game-progress';
+  const STAGE_THRESHOLDS = [0, 10, 30, 60, 100];
 
-  function applyGrowth(part) {
-    const p = parts[part];
-    const growth = Math.min(p.count, TAPS_TO_MAX) / TAPS_TO_MAX;
-    const ratio = (p.baseWidth + p.maxAdd * growth) / p.baseWidth;
-    p.els.forEach(el => { el.style.setProperty('--grow', ratio); });
+  function buildBodyPath(p) {
+    const L = (h) => (110 - h).toFixed(1);
+    const R = (h) => (110 + h).toFixed(1);
+    return [
+      'M', L(14), ',52',
+      ' C', L(20), ',58 ', L(26), ',58 ', L(p.shoulder), ',62',
+      ' C', L(p.armOuter - 6), ',90 ', L(p.armOuter - 2), ',120 ', L(p.armOuter), ',150',
+      ' L', L(p.hand), ',158',
+      ' C', L(p.armpit + 8), ',145 ', L(p.armpit + 3), ',125 ', L(p.armpit), ',110',
+      ' C', L(p.waist - 2), ',130 ', L(p.waist - 1), ',150 ', L(p.waist), ',168',
+      ' C', L(p.legOuter + 1), ',200 ', L(p.legOuter + 0.5), ',230 ', L(p.legOuter), ',262',
+      ' L', L(p.foot), ',268',
+      ' C', L(p.crotch + 3), ',230 ', L(p.crotch + 1), ',200 ', L(p.crotch), ',180',
+      ' L', R(p.crotch), ',180',
+      ' C', R(p.crotch + 1), ',200 ', R(p.crotch + 3), ',230 ', R(p.foot), ',268',
+      ' L', R(p.legOuter), ',262',
+      ' C', R(p.legOuter + 0.5), ',230 ', R(p.legOuter + 1), ',200 ', R(p.waist), ',168',
+      ' C', R(p.waist - 1), ',150 ', R(p.waist - 2), ',130 ', R(p.armpit), ',110',
+      ' C', R(p.armpit + 3), ',125 ', R(p.armpit + 8), ',145 ', R(p.hand), ',158',
+      ' L', R(p.armOuter), ',150',
+      ' C', R(p.armOuter - 2), ',120 ', R(p.armOuter - 6), ',90 ', R(p.shoulder), ',62',
+      ' C', R(26), ',58 ', R(20), ',58 ', R(14), ',52',
+      ' Z'
+    ].join('');
+  }
+
+  const SLIM = { shoulder: 34, armOuter: 36, hand: 30, armpit: 14, waist: 26, legOuter: 20, foot: 24, crotch: 8 };
+  const BUFF = { shoulder: 60, armOuter: 70, hand: 48, armpit: 34, waist: 44, legOuter: 34, foot: 38, crotch: 8 };
+
+  function lerpParams(t) {
+    const out = {};
+    Object.keys(SLIM).forEach(k => { out[k] = SLIM[k] + (BUFF[k] - SLIM[k]) * t; });
+    return out;
+  }
+
+  const STAGE_PATHS = [0, 0.25, 0.5, 0.75, 1].map(t => buildBodyPath(lerpParams(t)));
+
+  function stageForTotal(total) {
+    let stage = 0;
+    STAGE_THRESHOLDS.forEach((min, idx) => { if (total >= min) stage = idx; });
+    return stage;
+  }
+
+  function updateBodyStage() {
+    const total = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
+    const stageIdx = stageForTotal(total);
+    bodyEl.style.d = 'path("' + STAGE_PATHS[stageIdx] + '")';
   }
 
   function saveProgress() {
@@ -330,7 +322,6 @@
       if (typeof saved[key] === 'number' && saved[key] > 0) {
         parts[key].count = saved[key];
         document.getElementById('count-' + key).textContent = saved[key] + '回';
-        applyGrowth(key);
       }
     });
     const total = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
@@ -340,15 +331,15 @@
     }
   }
 
-  document.querySelectorAll('.tap-shape').forEach(shape => {
-    shape.addEventListener('click', () => {
-      const part = shape.dataset.part;
+  document.querySelectorAll('.tap-zone').forEach(zone => {
+    zone.addEventListener('click', () => {
+      const part = zone.dataset.part;
       const p = parts[part];
       p.count += 1;
       document.getElementById('count-' + part).textContent = p.count + '回';
-      applyGrowth(part);
       infoName.textContent = p.name;
       infoDesc.textContent = p.desc;
+      updateBodyStage();
       saveProgress();
     });
   });
@@ -358,15 +349,15 @@
     Object.keys(parts).forEach(key => {
       parts[key].count = 0;
       document.getElementById('count-' + key).textContent = '0回';
-      applyGrowth(key);
     });
     infoName.textContent = 'さあ、鍛えよう！';
     infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう';
+    updateBodyStage();
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   });
 
-  Object.keys(parts).forEach(key => applyGrowth(key));
   loadProgress();
+  bodyEl.setAttribute('d', STAGE_PATHS[stageForTotal(Object.keys(parts).reduce((s, k) => s + parts[k].count, 0))]);
 </script>
 </body>
 </html>
