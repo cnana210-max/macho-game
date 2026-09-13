@@ -165,8 +165,6 @@
   <h1>マッチョ育成ゲーム</h1>
   <div class="stage">
     <svg class="character" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
-      <rect x="97" y="48" width="26" height="18" fill="var(--skin)" />
-
       <path id="bodySilhouette" class="body-silhouette outlined" d="" />
 
       <path class="detail-line" d="M110,66 L110,94" />
@@ -259,34 +257,64 @@
   const STORAGE_KEY = 'macho-game-progress';
   const STAGE_THRESHOLDS = [0, 10, 30, 60, 100];
 
-  function buildBodyPath(p) {
-    const L = (h) => (110 - h).toFixed(1);
-    const R = (h) => (110 + h).toFixed(1);
-    return [
-      'M', L(14), ',52',
-      ' C', L(20), ',58 ', L(26), ',58 ', L(p.shoulder), ',62',
-      ' C', L(p.armOuter - 6), ',90 ', L(p.armOuter - 2), ',120 ', L(p.armOuter), ',150',
-      ' L', L(p.hand), ',158',
-      ' C', L(p.armpit + 8), ',145 ', L(p.armpit + 3), ',125 ', L(p.armpit), ',110',
-      ' C', L(p.waist - 2), ',130 ', L(p.waist - 1), ',150 ', L(p.waist), ',168',
-      ' C', L(p.legOuter + 1), ',200 ', L(p.legOuter + 0.5), ',230 ', L(p.legOuter), ',262',
-      ' L', L(p.foot), ',268',
-      ' C', L(p.crotch + 3), ',230 ', L(p.crotch + 1), ',200 ', L(p.crotch), ',180',
-      ' L', R(p.crotch), ',180',
-      ' C', R(p.crotch + 1), ',200 ', R(p.crotch + 3), ',230 ', R(p.foot), ',268',
-      ' L', R(p.legOuter), ',262',
-      ' C', R(p.legOuter + 0.5), ',230 ', R(p.legOuter + 1), ',200 ', R(p.waist), ',168',
-      ' C', R(p.waist - 1), ',150 ', R(p.waist - 2), ',130 ', R(p.armpit), ',110',
-      ' C', R(p.armpit + 3), ',125 ', R(p.armpit + 8), ',145 ', R(p.hand), ',158',
-      ' L', R(p.armOuter), ',150',
-      ' C', R(p.armOuter - 2), ',120 ', R(p.armOuter - 6), ',90 ', R(p.shoulder), ',62',
-      ' C', R(26), ',58 ', R(20), ',58 ', R(14), ',52',
-      ' Z'
-    ].join('');
+  function smoothClosedPath(points) {
+    const n = points.length;
+    let d = 'M ' + points[0][0].toFixed(1) + ',' + points[0][1].toFixed(1) + ' ';
+    for (let i = 0; i < n; i++) {
+      const p0 = points[(i - 1 + n) % n];
+      const p1 = points[i];
+      const p2 = points[(i + 1) % n];
+      const p3 = points[(i + 2) % n];
+      const c1x = p1[0] + (p2[0] - p0[0]) / 10;
+      const c1y = p1[1] + (p2[1] - p0[1]) / 10;
+      const c2x = p2[0] - (p3[0] - p1[0]) / 10;
+      const c2y = p2[1] - (p3[1] - p1[1]) / 10;
+      d += 'C ' + c1x.toFixed(1) + ',' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ',' + c2y.toFixed(1) + ' ' + p2[0].toFixed(1) + ',' + p2[1].toFixed(1) + ' ';
+    }
+    return d + 'Z';
   }
 
-  const SLIM = { shoulder: 34, armOuter: 36, hand: 30, armpit: 14, waist: 26, legOuter: 20, foot: 24, crotch: 8 };
-  const BUFF = { shoulder: 60, armOuter: 70, hand: 48, armpit: 34, waist: 44, legOuter: 34, foot: 38, crotch: 8 };
+  function bodyPoints(p) {
+    const inner = {
+      wrist: p.wrist - 4,
+      elbow: p.elbow - 6,
+      ankle: p.ankle - 4,
+      calf: p.calf - 12,
+      knee: p.knee - 8
+    };
+    const left = [
+      [110 - p.neckW, 50],
+      [110 - p.shoulder, 72],
+      [110 - p.bicep, 92],
+      [110 - p.elbow, 100],
+      [110 - p.wrist, 118],
+      [110 - p.fist, 130],
+      [110 - inner.wrist, 116],
+      [110 - inner.elbow, 102],
+      [110 - p.armpit, 92],
+      [110 - p.chest, 150],
+      [110 - p.waist, 160],
+      [110 - p.hip, 172],
+      [110 - p.thigh, 188],
+      [110 - p.knee, 218],
+      [110 - p.calf, 240],
+      [110 - p.ankle, 260],
+      [110 - p.foot, 270],
+      [110 - inner.ankle, 260],
+      [110 - inner.calf, 240],
+      [110 - inner.knee, 218],
+      [110 - p.crotch, 186]
+    ];
+    const right = left.slice().reverse().map(([x, y]) => [220 - x, y]);
+    return left.concat(right);
+  }
+
+  function buildBodyPath(p) {
+    return smoothClosedPath(bodyPoints(p));
+  }
+
+  const SLIM = { neckW: 15, shoulder: 34, bicep: 42, elbow: 32, wrist: 27, fist: 31, armpit: 15, chest: 30, waist: 23, hip: 28, thigh: 27, knee: 19, calf: 23, ankle: 15, foot: 20, crotch: 8 };
+  const BUFF = { neckW: 18, shoulder: 62, bicep: 84, elbow: 56, wrist: 42, fist: 47, armpit: 30, chest: 48, waist: 34, hip: 44, thigh: 44, knee: 28, calf: 38, ankle: 21, foot: 27, crotch: 8 };
 
   function lerpParams(t) {
     const out = {};
