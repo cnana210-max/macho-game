@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>マッチョ育成ゲーム</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg-top: #fff2e0;
+    --bg-bottom: #ffd9a8;
+    --skin: #f2b980;
+    --skin-shade: #d99b5f;
+    --accent: #ff6b35;
+    --accent-dark: #e0501d;
+    --ink: #3a2a1a;
+    --panel: #ffffff;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    color: var(--ink);
+  }
+  body {
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg-bottom) 100%);
+    min-height: 100vh;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .app {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    padding: 16px 16px 24px;
+  }
+  h1 {
+    text-align: center;
+    font-size: clamp(20px, 5vw, 28px);
+    margin: 4px 0 12px;
+    letter-spacing: 0.05em;
+  }
+  .stage {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 260px;
+    padding: 12px 0;
+  }
+  .character {
+    position: relative;
+    width: 220px;
+    height: 260px;
+  }
+  .head {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--skin);
+    border: 3px solid var(--skin-shade);
+  }
+  .torso {
+    position: absolute;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90px;
+    height: 100px;
+    border-radius: 24px 24px 30px 30px;
+    background: var(--skin);
+    border: 3px solid var(--skin-shade);
+    transition: width 0.25s ease;
+  }
+  .arm {
+    position: absolute;
+    top: 62px;
+    width: 24px;
+    height: 90px;
+    border-radius: 14px;
+    background: var(--skin);
+    border: 3px solid var(--skin-shade);
+    transition: width 0.25s ease, transform 0.25s ease;
+  }
+  .arm-left { left: 50%; transform: translateX(calc(-45px - 100%)); transform-origin: top center; }
+  .arm-right { left: 50%; transform: translateX(45px); transform-origin: top center; }
+  .leg {
+    position: absolute;
+    top: 148px;
+    width: 32px;
+    height: 100px;
+    border-radius: 0 0 16px 16px;
+    background: var(--skin);
+    border: 3px solid var(--skin-shade);
+    transition: width 0.25s ease;
+  }
+  .leg-left { left: 50%; transform: translateX(-38px); }
+  .leg-right { left: 50%; transform: translateX(6px); }
+  .info {
+    background: var(--panel);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin: 0 0 14px;
+    min-height: 64px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .info .name {
+    font-size: clamp(17px, 4.5vw, 20px);
+    font-weight: bold;
+    color: var(--accent-dark);
+  }
+  .info .desc {
+    font-size: clamp(14px, 3.8vw, 16px);
+    line-height: 1.4;
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+  }
+  .part-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 16px 6px;
+    border: none;
+    border-radius: 18px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    box-shadow: 0 4px 0 var(--accent-dark);
+    transition: transform 0.08s ease, box-shadow 0.08s ease;
+  }
+  .part-btn:active {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 var(--accent-dark);
+  }
+  .btn-label {
+    font-size: clamp(18px, 5vw, 22px);
+    font-weight: bold;
+  }
+  .btn-count {
+    font-size: clamp(13px, 3.5vw, 15px);
+    opacity: 0.9;
+  }
+  @media (max-height: 640px) {
+    .character { width: 180px; height: 210px; }
+    .stage { min-height: 200px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <h1>マッチョ育成ゲーム</h1>
+  <div class="stage">
+    <div class="character">
+      <div class="head"></div>
+      <div class="torso" id="part-chest"></div>
+      <div class="arm arm-left" id="part-arm-left"></div>
+      <div class="arm arm-right" id="part-arm-right"></div>
+      <div class="leg leg-left" id="part-leg-left"></div>
+      <div class="leg leg-right" id="part-leg-right"></div>
+    </div>
+  </div>
+  <div class="info" id="info">
+    <div class="name">さあ、鍛えよう！</div>
+    <div class="desc">下のボタンをタップして筋トレを始めましょう</div>
+  </div>
+  <div class="controls">
+    <button class="part-btn" data-part="chest">
+      <span class="btn-label">胸</span>
+      <span class="btn-count" id="count-chest">0回</span>
+    </button>
+    <button class="part-btn" data-part="arm">
+      <span class="btn-label">腕</span>
+      <span class="btn-count" id="count-arm">0回</span>
+    </button>
+    <button class="part-btn" data-part="leg">
+      <span class="btn-label">脚</span>
+      <span class="btn-count" id="count-leg">0回</span>
+    </button>
+  </div>
+</div>
+<script>
+  const parts = {
+    chest: {
+      name: '大胸筋',
+      desc: '胸の中心を覆う大きな筋肉。押す動作で使われます。',
+      els: [document.getElementById('part-chest')],
+      baseWidth: 90,
+      maxAdd: 46,
+      count: 0
+    },
+    arm: {
+      name: '上腕二頭筋',
+      desc: '腕の力こぶ。ものを持ち上げる動作で使われます。',
+      els: [document.getElementById('part-arm-left'), document.getElementById('part-arm-right')],
+      baseWidth: 24,
+      maxAdd: 20,
+      count: 0
+    },
+    leg: {
+      name: '大腿四頭筋',
+      desc: '太ももの前側の筋肉。歩く・走るときに使われます。',
+      els: [document.getElementById('part-leg-left'), document.getElementById('part-leg-right')],
+      baseWidth: 32,
+      maxAdd: 22,
+      count: 0
+    }
+  };
+
+  const infoName = document.querySelector('#info .name');
+  const infoDesc = document.querySelector('#info .desc');
+  const STEP = 3;
+  const TAPS_TO_MAX = 15;
+
+  function applyGrowth(part) {
+    const p = parts[part];
+    const growth = Math.min(p.count, TAPS_TO_MAX) / TAPS_TO_MAX;
+    const width = p.baseWidth + p.maxAdd * growth;
+    p.els.forEach(el => { el.style.width = width + 'px'; });
+  }
+
+  document.querySelectorAll('.part-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const part = btn.dataset.part;
+      const p = parts[part];
+      p.count += 1;
+      document.getElementById('count-' + part).textContent = p.count + '回';
+      applyGrowth(part);
+      infoName.textContent = p.name;
+      infoDesc.textContent = p.desc;
+    });
+  });
+</script>
+</body>
+</html>
