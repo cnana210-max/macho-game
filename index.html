@@ -49,6 +49,56 @@
     margin: 4px 0 12px;
     letter-spacing: 0.05em;
   }
+  .offline-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    animation: bannerSlideDown 0.3s ease;
+  }
+  .offline-banner[hidden] {
+    display: none;
+  }
+  .offline-banner.hide {
+    animation: bannerSlideUp 0.3s ease forwards;
+  }
+  @keyframes bannerSlideDown {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bannerSlideUp {
+    0% { opacity: 1; transform: translateY(0); max-height: 80px; margin-bottom: 10px; }
+    100% { opacity: 0; transform: translateY(-10px); max-height: 0; margin-bottom: 0; }
+  }
+  .offline-banner-text {
+    font-size: clamp(12px, 3.6vw, 14px);
+    font-weight: bold;
+    line-height: 1.4;
+    flex: 1;
+  }
+  .offline-banner-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    flex-shrink: 0;
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: clamp(12px, 3.6vw, 14px);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .offline-banner-btn:active {
+    filter: brightness(0.9);
+  }
   .top-stats {
     display: flex;
     gap: 10px;
@@ -541,6 +591,7 @@
     .character-img { max-height: 225px; }
     .stage { min-height: 225px; padding: 6px 0 12px; }
     h1 { margin: 2px 0 8px; }
+    .offline-banner { padding: 8px 12px; margin-bottom: 8px; }
     .top-stats { margin-bottom: 6px; }
     .stat-box { padding: 8px 12px; }
     .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
@@ -554,6 +605,10 @@
 <body>
 <div class="app">
   <h1>マッチョ育成ゲーム</h1>
+  <div class="offline-banner" id="offlineBanner" hidden>
+    <span class="offline-banner-text" id="offlineBannerText">おかえり！ 0時間0分のトレーニングで ＋0P</span>
+    <button class="offline-banner-btn" id="offlineBannerBtn">受け取る</button>
+  </div>
   <div class="top-stats">
     <div class="stat-box">
       <div class="stat-label">筋力P</div>
@@ -671,6 +726,9 @@
   const quizResultBonus = document.getElementById('quizResultBonus');
   const quizResultPerfect = document.getElementById('quizResultPerfect');
   const quizCloseBtn = document.getElementById('quizCloseBtn');
+  const offlineBanner = document.getElementById('offlineBanner');
+  const offlineBannerText = document.getElementById('offlineBannerText');
+  const offlineBannerBtn = document.getElementById('offlineBannerBtn');
   let levelupTimer = null;
   const STORAGE_KEY = 'macho-game-progress';
   const STAGE_THRESHOLDS = [0, 10, 25, 45, 70, 100];
@@ -680,6 +738,8 @@
   const QUIZ_CORRECT_BONUS = 50;
   const QUIZ_PERFECT_BONUS = 200;
   const QUIZ_ANSWER_DELAY = 1200;
+  const OFFLINE_CAP_SECONDS = 8 * 60 * 60;
+  const OFFLINE_MIN_SECONDS = 60;
   let currentStage = -1;
   let quizQuestions = [];
   let quizIndex = 0;
@@ -687,6 +747,8 @@
   let quizAnswering = false;
   let quizPendingBonus = 0;
   let quizAdvanceTimer = null;
+  let lastActiveAt = null;
+  let pendingOfflineReward = null;
 
   const SHOP_ITEMS = [
     { id: 'protein', name: 'プロテイン', desc: '1タップの獲得量 +1', basePrice: 10, type: 'tap', value: 1 },
@@ -959,6 +1021,7 @@
     data.powerWallet = powerWallet;
     data.powerLifetime = powerLifetime;
     data.shopOwned = shopOwned;
+    data.lastActiveAt = Date.now();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
   }
 
@@ -982,10 +1045,42 @@
         }
       });
     }
+    lastActiveAt = typeof saved.lastActiveAt === 'number' ? saved.lastActiveAt : null;
     if (tapTotal > 0) {
       infoName.textContent = 'おかえりなさい！';
       infoDesc.textContent = 'ここまで育てたマッチョです。続きを鍛えましょう';
     }
+  }
+
+  function checkOfflineReward() {
+    const ps = calcPerSecond();
+    if (ps <= 0 || !lastActiveAt) return;
+    const elapsedSec = Math.floor((Date.now() - lastActiveAt) / 1000);
+    if (elapsedSec < OFFLINE_MIN_SECONDS) return;
+    const cappedSec = Math.min(elapsedSec, OFFLINE_CAP_SECONDS);
+    const earned = ps * cappedSec;
+    if (earned <= 0) return;
+    pendingOfflineReward = { amount: earned };
+    const hours = Math.floor(cappedSec / 3600);
+    const minutes = Math.floor((cappedSec % 3600) / 60);
+    offlineBannerText.textContent = 'おかえり！ ' + hours + '時間' + minutes + '分のトレーニングで ＋' + formatNumber(earned) + 'P';
+    offlineBanner.hidden = false;
+  }
+
+  function claimOfflineReward() {
+    if (!pendingOfflineReward) return;
+    const bonus = pendingOfflineReward.amount;
+    pendingOfflineReward = null;
+    offlineBanner.classList.add('hide');
+    setTimeout(() => {
+      offlineBanner.hidden = true;
+      offlineBanner.classList.remove('hide');
+    }, 300);
+    powerWallet += bonus;
+    powerLifetime += bonus;
+    updateBodyStage();
+    refreshShopDisplay();
+    saveProgress();
   }
 
   document.querySelectorAll('.part-status').forEach(zone => {
@@ -1014,11 +1109,22 @@
     powerWallet = 0;
     powerLifetime = 0;
     Object.keys(shopOwned).forEach(id => { shopOwned[id] = 0; });
+    lastActiveAt = null;
+    pendingOfflineReward = null;
+    offlineBanner.hidden = true;
+    offlineBanner.classList.remove('hide');
     infoName.textContent = 'さあ、鍛えよう！';
     infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう';
     updateBodyStage();
     refreshShopDisplay();
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  });
+
+  offlineBannerBtn.addEventListener('click', claimOfflineReward);
+
+  window.addEventListener('pagehide', saveProgress);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveProgress();
   });
 
   SHOP_ITEMS.forEach(item => {
@@ -1061,6 +1167,7 @@
   bodyImg.src = 'images/lv' + (currentStage + 1) + '.png';
   updateTopDisplay(currentStage);
   refreshShopDisplay();
+  checkOfflineReward();
 </script>
 </body>
 </html>
