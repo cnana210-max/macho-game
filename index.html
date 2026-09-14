@@ -17,8 +17,9 @@
     --panel: #ffffff;
     --red: #e23b2e;
     --gold: #f5c518;
-    --teal: #3e8e8a;
-    --outline: #1c1a17;
+    --blue: #2b5fa8;
+    --white: #ffffff;
+    --outline: #3a2419;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -165,6 +166,23 @@
   <h1>マッチョ育成ゲーム</h1>
   <div class="stage">
     <svg class="character" viewBox="0 0 220 300" xmlns="http://www.w3.org/2000/svg">
+      <path d="M96,55 C80,58 58,64 46,80 C34,96 30,122 33,150
+               C35,178 41,206 52,230 C60,240 66,236 62,224
+               L58,168 C56,128 60,90 96,55 Z"
+        fill="var(--red)" class="outlined" pointer-events="none" />
+      <g pointer-events="none" opacity="0.6">
+        <circle cx="52" cy="100" r="4" fill="#ffb3c6" />
+        <circle cx="64" cy="88" r="3.5" fill="#b3e5ff" />
+        <circle cx="42" cy="128" r="4" fill="#fff3b0" />
+        <circle cx="56" cy="140" r="3.5" fill="#c8f7c5" />
+        <circle cx="38" cy="160" r="4" fill="#d8b3ff" />
+        <circle cx="52" cy="176" r="3.5" fill="#ffd0a8" />
+        <circle cx="44" cy="196" r="4" fill="#b3e5ff" />
+        <circle cx="58" cy="206" r="3.5" fill="#ffb3c6" />
+        <circle cx="50" cy="220" r="3.5" fill="#fff3b0" />
+        <circle cx="68" cy="118" r="3" fill="#c8f7c5" />
+      </g>
+
       <path id="bodySilhouette" class="body-silhouette outlined" d="" />
 
       <path class="detail-line" d="M110,66 L110,94" />
@@ -172,27 +190,27 @@
       <path class="detail-line" d="M100,138 L120,138" />
       <path class="detail-line" d="M100,148 L120,148" />
 
-      <rect x="74" y="163" width="72" height="26" rx="12" fill="var(--red)" class="outlined" pointer-events="none" />
-      <rect x="74" y="163" width="72" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <rect x="74" y="163" width="72" height="26" rx="12" fill="var(--blue)" class="outlined" pointer-events="none" />
+      <path d="M93,167 L94.4,171.6 L99,173 L94.4,174.4 L93,179 L91.6,174.4 L87,173 L91.6,171.6 Z"
+        fill="var(--gold)" class="outlined" pointer-events="none" />
+      <path d="M112,174 L113.4,178.6 L118,180 L113.4,181.4 L112,186 L110.6,181.4 L106,180 L110.6,178.6 Z"
+        fill="var(--gold)" class="outlined" pointer-events="none" />
+      <path d="M126,164 L127.4,168.6 L132,170 L127.4,171.4 L126,176 L124.6,171.4 L120,170 L124.6,168.6 Z"
+        fill="var(--gold)" class="outlined" pointer-events="none" />
 
-      <rect x="72" y="222" width="34" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
-      <rect x="72" y="222" width="34" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
-      <rect x="114" y="222" width="34" height="50" rx="10" fill="var(--red)" class="outlined" pointer-events="none" />
-      <rect x="114" y="222" width="34" height="10" rx="5" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <rect x="72" y="205" width="34" height="65" rx="12" fill="var(--white)" class="outlined" pointer-events="none" />
+      <rect x="114" y="205" width="34" height="65" rx="12" fill="var(--white)" class="outlined" pointer-events="none" />
 
-      <rect x="40" y="148" width="26" height="12" rx="5" fill="var(--teal)" class="outlined" pointer-events="none" />
-      <rect x="154" y="148" width="26" height="12" rx="5" fill="var(--teal)" class="outlined" pointer-events="none" />
+      <ellipse cx="110" cy="34" rx="27" ry="26" fill="var(--white)" class="outlined" pointer-events="none" />
+      <rect x="107" y="8" width="6" height="32" rx="3" fill="var(--red)" pointer-events="none" />
 
-      <rect x="107" y="8" width="6" height="32" rx="3" fill="var(--gold)" pointer-events="none" />
-      <ellipse cx="110" cy="34" rx="27" ry="26" fill="var(--red)" class="outlined" pointer-events="none" />
-
-      <ellipse cx="95" cy="32" rx="8" ry="6" fill="var(--gold)" class="outlined" pointer-events="none" />
-      <ellipse cx="125" cy="32" rx="8" ry="6" fill="var(--gold)" class="outlined" pointer-events="none" />
+      <ellipse cx="95" cy="32" rx="8" ry="6" fill="var(--red)" class="outlined" pointer-events="none" />
+      <ellipse cx="125" cy="32" rx="8" ry="6" fill="var(--red)" class="outlined" pointer-events="none" />
       <circle cx="95" cy="32" r="3.5" fill="#fff" pointer-events="none" />
       <circle cx="125" cy="32" r="3.5" fill="#fff" pointer-events="none" />
 
       <path d="M99,45 C99,50 104,54 110,54 C116,54 121,50 121,45 C121,52 116,58 110,58 C104,58 99,52 99,45 Z"
-        fill="var(--gold)" class="outlined" pointer-events="none" />
+        fill="var(--red)" class="outlined" pointer-events="none" />
       <ellipse cx="110" cy="49" rx="5.5" ry="2.5" fill="var(--outline)" pointer-events="none" />
 
       <rect class="tap-zone" data-part="shoulder" x="38" y="50" width="47" height="42" />
@@ -285,7 +303,8 @@
     const left = [
       [110 - p.neckW, 50],
       [110 - p.shoulder, 72],
-      [110 - p.bicep, 92],
+      [110 - p.bicep, 86],
+      [110 - p.bicep, 98],
       [110 - p.elbow, 100],
       [110 - p.wrist, 118],
       [110 - p.fist, 130],
