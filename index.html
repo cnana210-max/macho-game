@@ -212,12 +212,29 @@
     filter: drop-shadow(0 14px 22px rgba(0,0,0,0.55));
   }
   .character-img.punch {
-    animation: punchScale 0.4s ease-out;
+    animation: punchScale 0.4s ease-out 0.25s;
   }
   @keyframes punchScale {
     0% { transform: scale(1); }
     45% { transform: scale(1.15); }
     100% { transform: scale(1); }
+  }
+  .levelup-dim {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9997;
+    opacity: 0;
+    background: radial-gradient(circle at var(--spot-x, 50%) var(--spot-y, 45%), rgba(0,0,0,0) 0%, rgba(0,0,0,0) 18%, rgba(6,4,10,0.82) 65%);
+  }
+  .levelup-dim.show {
+    animation: dimPulse 0.6s ease-out forwards;
+  }
+  @keyframes dimPulse {
+    0% { opacity: 0; }
+    25% { opacity: 1; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
   }
   .levelup-glow {
     position: absolute;
@@ -244,6 +261,82 @@
     30% { opacity: 1; transform: scale(1.1); }
     100% { opacity: 0; transform: scale(1.35); }
   }
+  .levelup-burst {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .levelup-burst.show {
+    animation: burstPulse 0.7s ease-out 0.28s forwards;
+  }
+  .levelup-burst::before {
+    content: '';
+    width: 40%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(245,197,24,0.85) 30%, rgba(245,197,24,0.3) 55%, rgba(245,197,24,0) 75%);
+  }
+  @keyframes burstPulse {
+    0% { opacity: 0; transform: scale(0.3); }
+    35% { opacity: 1; transform: scale(1.3); }
+    100% { opacity: 0; transform: scale(2.2); }
+  }
+  .levelup-rings {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .levelup-ring {
+    position: absolute;
+    width: 32%;
+    aspect-ratio: 1;
+    border: 4px solid rgba(245,197,24,0.9);
+    border-radius: 50%;
+    opacity: 0;
+  }
+  .levelup-rings.show .ring1 {
+    animation: ringExpand 0.9s ease-out 0.28s forwards;
+  }
+  .levelup-rings.show .ring2 {
+    animation: ringExpand 0.9s ease-out 0.43s forwards;
+  }
+  @keyframes ringExpand {
+    0% { opacity: 0.9; transform: scale(0.3); border-width: 6px; }
+    100% { opacity: 0; transform: scale(2.6); border-width: 1px; }
+  }
+  .levelup-rays {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .levelup-ray {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 6px;
+    height: 42%;
+    margin-left: -3px;
+    transform-origin: 50% 0%;
+    transform: rotate(var(--ray-angle, 0deg)) scaleY(0);
+    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(245,197,24,0.75) 45%, rgba(245,197,24,0) 100%);
+    clip-path: polygon(40% 0%, 60% 0%, 100% 22%, 55% 32%, 100% 52%, 50% 64%, 90% 78%, 50% 100%, 10% 78%, 45% 64%, 0% 52%, 45% 32%, 0% 22%);
+    opacity: 0;
+  }
+  .levelup-rays.show .levelup-ray {
+    animation: rayShoot 0.5s ease-out 0.28s forwards;
+  }
+  @keyframes rayShoot {
+    0% { opacity: 0; transform: rotate(var(--ray-angle, 0deg)) scaleY(0); }
+    30% { opacity: 1; transform: rotate(var(--ray-angle, 0deg)) scaleY(1.1); }
+    100% { opacity: 0; transform: rotate(var(--ray-angle, 0deg)) scaleY(1); }
+  }
   .levelup-particles {
     position: absolute;
     inset: 0;
@@ -269,11 +362,13 @@
     line-height: 1;
   }
   .levelup-particle.show {
-    animation: particleBurst 0.9s ease-out forwards;
+    animation: particleBurst 1.1s ease-out forwards;
   }
   @keyframes particleBurst {
-    0% { opacity: 1; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(0.4); }
+    0% { opacity: 0; transform: translate(-50%, -50%) translate(0, 0) scale(1); }
+    12% { opacity: 1; }
+    50% { opacity: 1; transform: translate(-50%, -50%) translate(var(--dx), var(--dy)) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--dx), var(--fall-dy)) scale(0.5); }
   }
   .screen-flash {
     position: fixed;
@@ -284,7 +379,7 @@
     z-index: 9998;
   }
   .screen-flash.show {
-    animation: flashFade 0.4s ease-out forwards;
+    animation: flashFade 0.4s ease-out 0.25s forwards;
   }
   @keyframes flashFade {
     0% { opacity: 0; }
@@ -305,32 +400,35 @@
     padding: 0 16px;
   }
   .levelup-text-overlay.show {
-    animation: levelupOverlayFade 1.5s ease-out forwards;
+    animation: levelupOverlayFade 1.85s ease-out 0.15s forwards;
   }
   @keyframes levelupOverlayFade {
     0% { opacity: 0; }
-    12% { opacity: 1; }
-    75% { opacity: 1; }
+    10% { opacity: 1; }
+    78% { opacity: 1; }
     100% { opacity: 0; }
   }
   .levelup-main-text {
-    font-size: clamp(30px, 9vw, 48px);
+    font-size: clamp(38px, 12vw, 60px);
     font-weight: 900;
     color: var(--red);
-    -webkit-text-stroke: 1.5px #fff;
+    -webkit-text-stroke: 2px var(--gold);
     paint-order: stroke fill;
-    text-shadow: -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff, 2px 2px 0 #fff, 0 0 10px rgba(0,0,0,0.15);
+    text-shadow: 0 0 14px rgba(245,197,24,0.6), 0 0 6px rgba(0,0,0,0.3);
     letter-spacing: 0.03em;
     transform: scale(0.2);
   }
   .levelup-text-overlay.show .levelup-main-text {
-    animation: levelupPop 1.5s cubic-bezier(.25,1.6,.4,1) forwards;
+    animation: levelupPopShake 1.85s cubic-bezier(.25,1.6,.4,1) forwards;
   }
-  @keyframes levelupPop {
-    0% { transform: scale(0.2); }
-    18% { transform: scale(1.15); }
-    30% { transform: scale(1); }
-    100% { transform: scale(1); }
+  @keyframes levelupPopShake {
+    0% { transform: scale(0.2) rotate(0deg); }
+    15% { transform: scale(1.18) rotate(-2.5deg); }
+    20% { transform: scale(1.05) rotate(2.5deg); }
+    25% { transform: scale(1.1) rotate(-1.5deg); }
+    30% { transform: scale(1) rotate(1deg); }
+    35% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1) rotate(0deg); }
   }
   .levelup-sub-text {
     margin-top: 10px;
@@ -677,6 +775,12 @@
   </div>
   <div class="stage">
     <div class="levelup-glow" id="levelupGlow"></div>
+    <div class="levelup-burst" id="levelupBurst"></div>
+    <div class="levelup-rings" id="levelupRings">
+      <div class="levelup-ring ring1"></div>
+      <div class="levelup-ring ring2"></div>
+    </div>
+    <div class="levelup-rays" id="levelupRays"></div>
     <div class="character-wrap" id="characterWrap">
       <img class="character-img" id="bodyImage" src="images/lv1.png" alt="キャラクター">
       <div class="part-glow-layer" id="partGlowLayer"></div>
@@ -722,6 +826,7 @@
     <button class="reset-btn" id="resetBtn">最初から</button>
   </div>
 </div>
+<div class="levelup-dim" id="levelupDim"></div>
 <div class="screen-flash" id="screenFlash"></div>
 <div class="levelup-text-overlay" id="levelupTextOverlay">
   <div class="levelup-main-text">筋肉増量！</div>
@@ -763,7 +868,11 @@
   const progressTrack = document.getElementById('progressTrack');
   const progressFill = document.getElementById('progressFill');
   const progressMax = document.getElementById('progressMax');
+  const levelupDim = document.getElementById('levelupDim');
   const levelupGlow = document.getElementById('levelupGlow');
+  const levelupBurst = document.getElementById('levelupBurst');
+  const levelupRings = document.getElementById('levelupRings');
+  const levelupRays = document.getElementById('levelupRays');
   const levelupParticles = document.getElementById('levelupParticles');
   const screenFlash = document.getElementById('screenFlash');
   const levelupTextOverlay = document.getElementById('levelupTextOverlay');
@@ -934,19 +1043,39 @@
     }, 150);
   }
 
+  const LEVELUP_RAY_COUNT = 8;
+  for (let i = 0; i < LEVELUP_RAY_COUNT; i++) {
+    const ray = document.createElement('div');
+    ray.className = 'levelup-ray';
+    ray.style.setProperty('--ray-angle', (i * (360 / LEVELUP_RAY_COUNT)) + 'deg');
+    levelupRays.appendChild(ray);
+  }
+
+  function positionLevelupDim() {
+    const rect = characterWrap.getBoundingClientRect();
+    const xPct = ((rect.left + rect.width / 2) / window.innerWidth * 100).toFixed(1) + '%';
+    const yPct = ((rect.top + rect.height / 2) / window.innerHeight * 100).toFixed(1) + '%';
+    levelupDim.style.setProperty('--spot-x', xPct);
+    levelupDim.style.setProperty('--spot-y', yPct);
+  }
+
   function spawnLevelUpParticles() {
     levelupParticles.innerHTML = '';
-    const count = 16;
+    const count = 40;
     for (let i = 0; i < count; i++) {
       const p = document.createElement('div');
       const isStar = Math.random() < 0.5;
       p.className = 'levelup-particle' + (isStar ? ' star' : '');
       if (isStar) p.textContent = '★';
       const angle = (Math.PI * 2 * i) / count + (Math.random() * 0.5 - 0.25);
-      const dist = 60 + Math.random() * 70;
-      p.style.setProperty('--dx', (Math.cos(angle) * dist).toFixed(1) + 'px');
-      p.style.setProperty('--dy', (Math.sin(angle) * dist).toFixed(1) + 'px');
-      p.style.animationDelay = (Math.random() * 0.12).toFixed(2) + 's';
+      const dist = 55 + Math.random() * 85;
+      const dx = Math.cos(angle) * dist;
+      const dy = Math.sin(angle) * dist * 0.7;
+      const fallDy = dy + 50 + Math.random() * 70;
+      p.style.setProperty('--dx', dx.toFixed(1) + 'px');
+      p.style.setProperty('--dy', dy.toFixed(1) + 'px');
+      p.style.setProperty('--fall-dy', fallDy.toFixed(1) + 'px');
+      p.style.animationDelay = (0.22 + Math.random() * 0.18).toFixed(2) + 's';
       levelupParticles.appendChild(p);
     }
     void levelupParticles.offsetWidth;
@@ -957,24 +1086,29 @@
     clearTimeout(levelupTimer);
     levelupSub.textContent = TITLES[stageIdx] + ' に昇格！';
 
-    levelupTextOverlay.classList.remove('show');
-    levelupGlow.classList.remove('show');
-    screenFlash.classList.remove('show');
+    [levelupDim, levelupTextOverlay, levelupGlow, levelupBurst, levelupRings, levelupRays, screenFlash].forEach(el => {
+      el.classList.remove('show');
+    });
     bodyImg.classList.remove('punch');
     void levelupTextOverlay.offsetWidth;
 
+    positionLevelupDim();
+    levelupDim.classList.add('show');
     levelupTextOverlay.classList.add('show');
     levelupGlow.classList.add('show');
+    levelupBurst.classList.add('show');
+    levelupRings.classList.add('show');
+    levelupRays.classList.add('show');
     screenFlash.classList.add('show');
     bodyImg.classList.add('punch');
     spawnLevelUpParticles();
 
     levelupTimer = setTimeout(() => {
-      levelupTextOverlay.classList.remove('show');
-      levelupGlow.classList.remove('show');
-      screenFlash.classList.remove('show');
+      [levelupDim, levelupTextOverlay, levelupGlow, levelupBurst, levelupRings, levelupRays, screenFlash].forEach(el => {
+        el.classList.remove('show');
+      });
       levelupParticles.innerHTML = '';
-    }, 1500);
+    }, 2000);
   }
 
   function shuffle(arr) {
