@@ -91,6 +91,13 @@
     font-weight: bold;
     color: var(--accent-dark);
   }
+  .stat-sub {
+    margin-top: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--accent-dark);
+    opacity: 0.75;
+  }
   .stage {
     position: relative;
     flex: 1;
@@ -291,6 +298,83 @@
     font-size: clamp(13px, 3.5vw, 15px);
     opacity: 0.9;
   }
+  .shop {
+    margin-top: 18px;
+  }
+  .shop-title {
+    font-size: clamp(16px, 4.5vw, 19px);
+    font-weight: bold;
+    margin-bottom: 8px;
+    letter-spacing: 0.03em;
+  }
+  .shop-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .shop-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 10px 14px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .shop-item-info {
+    flex: 1;
+    min-width: 0;
+  }
+  .shop-item-name {
+    font-size: clamp(14px, 4vw, 16px);
+    font-weight: bold;
+    color: var(--accent-dark);
+  }
+  .shop-item-desc {
+    font-size: clamp(11px, 3.2vw, 13px);
+    opacity: 0.75;
+    margin-top: 2px;
+  }
+  .shop-item-owned {
+    font-size: clamp(11px, 3.2vw, 12px);
+    opacity: 0.6;
+    margin-top: 2px;
+  }
+  .shop-buy-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    border: none;
+    border-radius: 12px;
+    padding: 8px 12px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    min-width: 84px;
+  }
+  .shop-buy-btn:active:not(:disabled) {
+    filter: brightness(0.9);
+  }
+  .shop-buy-btn .price-val {
+    font-size: clamp(12px, 3.4vw, 14px);
+    font-weight: bold;
+  }
+  .shop-buy-btn .buy-label {
+    font-size: 11px;
+    opacity: 0.9;
+  }
+  .shop-buy-btn:disabled {
+    background: #d8d0c4;
+    color: #9a9086;
+    cursor: default;
+  }
   .reset-wrap {
     display: flex;
     justify-content: center;
@@ -319,6 +403,8 @@
     .top-stats { margin-bottom: 6px; }
     .stat-box { padding: 8px 12px; }
     .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
+    .shop { margin-top: 12px; }
+    .shop-item { padding: 8px 12px; }
     .reset-wrap { margin-top: 12px; }
   }
 </style>
@@ -330,6 +416,7 @@
     <div class="stat-box">
       <div class="stat-label">筋力P</div>
       <div class="stat-value" id="powerPValue">0</div>
+      <div class="stat-sub" id="powerPerSecond" hidden>毎秒 +0P</div>
     </div>
     <div class="stat-box">
       <div class="stat-label">称号</div>
@@ -375,6 +462,10 @@
       <span class="btn-count" id="count-abs">0回</span>
     </button>
   </div>
+  <div class="shop">
+    <div class="shop-title">ジム</div>
+    <div class="shop-list" id="shopList"></div>
+  </div>
   <div class="reset-wrap">
     <button class="reset-btn" id="resetBtn">最初から</button>
   </div>
@@ -407,11 +498,45 @@
   const screenFlash = document.getElementById('screenFlash');
   const levelupTextOverlay = document.getElementById('levelupTextOverlay');
   const levelupSub = document.getElementById('levelupSub');
+  const powerPerSecondEl = document.getElementById('powerPerSecond');
+  const shopListEl = document.getElementById('shopList');
   let levelupTimer = null;
   const STORAGE_KEY = 'macho-game-progress';
   const STAGE_THRESHOLDS = [0, 10, 25, 45, 70, 100];
   const TITLES = ['ひょろがり', 'かけだし', '見習いルチャドール', '中堅ルチャドール', '覆面マッチョ', '伝説の覆面王'];
   let currentStage = -1;
+
+  const SHOP_ITEMS = [
+    { id: 'protein', name: 'プロテイン', desc: '1タップの獲得量 +1', basePrice: 10, type: 'tap', value: 1 },
+    { id: 'dumbbell', name: 'ダンベル', desc: '毎秒 +1P', basePrice: 50, type: 'auto', value: 1 },
+    { id: 'bench', name: 'ベンチプレス台', desc: '毎秒 +5P', basePrice: 300, type: 'auto', value: 5 },
+    { id: 'trainer', name: 'パーソナルトレーナー', desc: '毎秒 +20P', basePrice: 1500, type: 'auto', value: 20 },
+    { id: 'suit', name: '加圧スーツ', desc: '1タップの獲得量 +5', basePrice: 5000, type: 'tap', value: 5 },
+    { id: 'belt', name: '王者のベルト', desc: '毎秒 +100P', basePrice: 20000, type: 'auto', value: 100 }
+  ];
+  const shopOwned = { protein: 0, dumbbell: 0, bench: 0, trainer: 0, suit: 0, belt: 0 };
+  let powerWallet = 0;
+  let powerLifetime = 0;
+
+  function formatNumber(n) {
+    n = Math.floor(n);
+    if (n >= 1000000) {
+      return (n / 10000).toFixed(1) + '万';
+    }
+    return n.toLocaleString('en-US');
+  }
+
+  function priceFor(item) {
+    return Math.ceil(item.basePrice * Math.pow(1.15, shopOwned[item.id]));
+  }
+
+  function calcTapBonus() {
+    return SHOP_ITEMS.filter(i => i.type === 'tap').reduce((sum, i) => sum + i.value * shopOwned[i.id], 0);
+  }
+
+  function calcPerSecond() {
+    return SHOP_ITEMS.filter(i => i.type === 'auto').reduce((sum, i) => sum + i.value * shopOwned[i.id], 0);
+  }
 
   function stageForTotal(total) {
     let stage = 0;
@@ -419,8 +544,18 @@
     return stage;
   }
 
-  function updateTopDisplay(total, stageIdx) {
-    powerPValue.textContent = total;
+  function updatePowerPerSecondDisplay() {
+    const ps = calcPerSecond();
+    if (ps > 0) {
+      powerPerSecondEl.hidden = false;
+      powerPerSecondEl.textContent = '毎秒 +' + formatNumber(ps) + 'P';
+    } else {
+      powerPerSecondEl.hidden = true;
+    }
+  }
+
+  function updateTopDisplay(stageIdx) {
+    powerPValue.textContent = formatNumber(powerWallet);
     titleValue.textContent = TITLES[stageIdx];
     if (stageIdx >= STAGE_THRESHOLDS.length - 1) {
       progressTrack.hidden = true;
@@ -430,15 +565,35 @@
       progressMax.hidden = true;
       const min = STAGE_THRESHOLDS[stageIdx];
       const max = STAGE_THRESHOLDS[stageIdx + 1];
-      const pct = Math.max(0, Math.min(100, ((total - min) / (max - min)) * 100));
+      const pct = Math.max(0, Math.min(100, ((powerLifetime - min) / (max - min)) * 100));
       progressFill.style.width = pct + '%';
     }
+    updatePowerPerSecondDisplay();
+  }
+
+  function refreshShopDisplay() {
+    SHOP_ITEMS.forEach(item => {
+      const price = priceFor(item);
+      document.getElementById('owned-' + item.id).textContent = shopOwned[item.id];
+      document.getElementById('price-' + item.id).textContent = formatNumber(price) + 'P';
+      document.getElementById('buy-' + item.id).disabled = powerWallet < price;
+    });
+  }
+
+  function buyItem(id) {
+    const item = SHOP_ITEMS.find(i => i.id === id);
+    const price = priceFor(item);
+    if (powerWallet < price) return;
+    powerWallet -= price;
+    shopOwned[id] += 1;
+    updateTopDisplay(currentStage);
+    refreshShopDisplay();
+    saveProgress();
   }
 
   function updateBodyStage() {
-    const total = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
-    const stageIdx = stageForTotal(total);
-    updateTopDisplay(total, stageIdx);
+    const stageIdx = stageForTotal(powerLifetime);
+    updateTopDisplay(stageIdx);
     if (stageIdx === currentStage) return;
     const previousStage = currentStage;
     currentStage = stageIdx;
@@ -498,6 +653,9 @@
   function saveProgress() {
     const data = {};
     Object.keys(parts).forEach(key => { data[key] = parts[key].count; });
+    data.powerWallet = powerWallet;
+    data.powerLifetime = powerLifetime;
+    data.shopOwned = shopOwned;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
   }
 
@@ -511,8 +669,17 @@
         document.getElementById('count-' + key).textContent = saved[key] + '回';
       }
     });
-    const total = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
-    if (total > 0) {
+    const tapTotal = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
+    powerLifetime = typeof saved.powerLifetime === 'number' ? saved.powerLifetime : tapTotal;
+    powerWallet = typeof saved.powerWallet === 'number' ? saved.powerWallet : powerLifetime;
+    if (saved.shopOwned) {
+      Object.keys(shopOwned).forEach(id => {
+        if (typeof saved.shopOwned[id] === 'number' && saved.shopOwned[id] > 0) {
+          shopOwned[id] = saved.shopOwned[id];
+        }
+      });
+    }
+    if (tapTotal > 0) {
       infoName.textContent = 'おかえりなさい！';
       infoDesc.textContent = 'ここまで育てたマッチョです。続きを鍛えましょう';
     }
@@ -526,7 +693,11 @@
       document.getElementById('count-' + part).textContent = p.count + '回';
       infoName.textContent = p.name;
       infoDesc.textContent = p.desc;
+      const gain = 1 + calcTapBonus();
+      powerWallet += gain;
+      powerLifetime += gain;
       updateBodyStage();
+      refreshShopDisplay();
       saveProgress();
     });
   });
@@ -537,17 +708,53 @@
       parts[key].count = 0;
       document.getElementById('count-' + key).textContent = '0回';
     });
+    powerWallet = 0;
+    powerLifetime = 0;
+    Object.keys(shopOwned).forEach(id => { shopOwned[id] = 0; });
     infoName.textContent = 'さあ、鍛えよう！';
     infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう';
     updateBodyStage();
+    refreshShopDisplay();
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
   });
 
+  SHOP_ITEMS.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'shop-item';
+    div.innerHTML =
+      '<div class="shop-item-info">' +
+        '<div class="shop-item-name">' + item.name + '</div>' +
+        '<div class="shop-item-desc">' + item.desc + '</div>' +
+        '<div class="shop-item-owned">所持数: <span class="owned-val" id="owned-' + item.id + '">0</span></div>' +
+      '</div>' +
+      '<button class="shop-buy-btn" id="buy-' + item.id + '" data-id="' + item.id + '">' +
+        '<span class="price-val" id="price-' + item.id + '">' + formatNumber(item.basePrice) + 'P</span>' +
+        '<span class="buy-label">買う</span>' +
+      '</button>';
+    shopListEl.appendChild(div);
+  });
+
+  shopListEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.shop-buy-btn');
+    if (!btn || btn.disabled) return;
+    buyItem(btn.dataset.id);
+  });
+
+  setInterval(() => {
+    const ps = calcPerSecond();
+    if (ps <= 0) return;
+    powerWallet += ps;
+    powerLifetime += ps;
+    updateBodyStage();
+    refreshShopDisplay();
+    saveProgress();
+  }, 1000);
+
   loadProgress();
-  const initialTotal = Object.keys(parts).reduce((sum, key) => sum + parts[key].count, 0);
-  currentStage = stageForTotal(initialTotal);
+  currentStage = stageForTotal(powerLifetime);
   bodyImg.src = 'images/lv' + (currentStage + 1) + '.png';
-  updateTopDisplay(initialTotal, currentStage);
+  updateTopDisplay(currentStage);
+  refreshShopDisplay();
 </script>
 </body>
 </html>
