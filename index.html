@@ -298,6 +298,147 @@
     font-size: clamp(13px, 3.5vw, 15px);
     opacity: 0.9;
   }
+  .quiz-open-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin-top: 18px;
+    padding: 14px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, var(--blue), #1d3f73);
+    color: #fff;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: clamp(15px, 4.5vw, 18px);
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  .quiz-open-btn:active {
+    filter: brightness(0.92);
+  }
+  .quiz-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 12, 5, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9985;
+    padding: 20px;
+  }
+  .quiz-overlay[hidden] {
+    display: none;
+  }
+  .quiz-card {
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 24px 20px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .quiz-progress {
+    font-size: 13px;
+    font-weight: bold;
+    opacity: 0.65;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .quiz-question {
+    font-size: clamp(16px, 4.6vw, 19px);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+  .quiz-choices {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .quiz-choice-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    border: 2px solid transparent;
+    border-radius: 14px;
+    padding: 14px 8px;
+    background: var(--bg-top);
+    color: var(--ink);
+    font-family: inherit;
+    font-weight: bold;
+    font-size: clamp(13px, 3.8vw, 15px);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .quiz-choice-btn:disabled {
+    cursor: default;
+  }
+  .quiz-choice-btn.correct {
+    border-color: #3ea35a;
+    background: #e4f6e9;
+    color: #1f7a3d;
+  }
+  .quiz-choice-btn.wrong {
+    border-color: var(--red);
+    background: #fbe4e2;
+    color: var(--red);
+  }
+  .quiz-feedback-text {
+    text-align: center;
+    margin-top: 14px;
+    font-weight: bold;
+    font-size: clamp(14px, 4vw, 16px);
+  }
+  .quiz-feedback-text.correct {
+    color: #1f7a3d;
+  }
+  .quiz-feedback-text.wrong {
+    color: var(--red);
+  }
+  .quiz-result-title {
+    font-size: clamp(24px, 7vw, 30px);
+    font-weight: 900;
+    text-align: center;
+    color: var(--accent-dark);
+    margin-bottom: 10px;
+  }
+  .quiz-result-bonus {
+    font-size: clamp(18px, 5.5vw, 22px);
+    font-weight: bold;
+    text-align: center;
+    color: var(--red);
+    margin-bottom: 8px;
+  }
+  .quiz-result-perfect {
+    text-align: center;
+    font-size: clamp(15px, 4.5vw, 17px);
+    font-weight: bold;
+    color: #b8860b;
+    margin-bottom: 14px;
+  }
+  .quiz-close-btn {
+    display: block;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: clamp(15px, 4.5vw, 17px);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .quiz-close-btn:active {
+    filter: brightness(0.9);
+  }
   .shop {
     margin-top: 18px;
   }
@@ -403,6 +544,7 @@
     .top-stats { margin-bottom: 6px; }
     .stat-box { padding: 8px 12px; }
     .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
+    .quiz-open-btn { margin-top: 12px; padding: 11px; }
     .shop { margin-top: 12px; }
     .shop-item { padding: 8px 12px; }
     .reset-wrap { margin-top: 12px; }
@@ -462,6 +604,7 @@
       <span class="btn-count" id="count-abs">0回</span>
     </button>
   </div>
+  <button class="quiz-open-btn" id="quizOpenBtn">筋肉クイズに挑戦</button>
   <div class="shop">
     <div class="shop-title">ジム</div>
     <div class="shop-list" id="shopList"></div>
@@ -474,6 +617,22 @@
 <div class="levelup-text-overlay" id="levelupTextOverlay">
   <div class="levelup-main-text">筋肉増量！</div>
   <div class="levelup-sub-text" id="levelupSub">かけだし に昇格！</div>
+</div>
+<div class="quiz-overlay" id="quizOverlay" hidden>
+  <div class="quiz-card">
+    <div id="quizQuestionView">
+      <div class="quiz-progress" id="quizProgress">1問目 / 5問</div>
+      <div class="quiz-question" id="quizQuestion"></div>
+      <div class="quiz-choices" id="quizChoices"></div>
+      <div class="quiz-feedback-text" id="quizFeedbackText" hidden></div>
+    </div>
+    <div id="quizResultView" hidden>
+      <div class="quiz-result-title" id="quizResultTitle">3問正解！</div>
+      <div class="quiz-result-bonus" id="quizResultBonus">＋150P 獲得</div>
+      <div class="quiz-result-perfect" id="quizResultPerfect" hidden>パーフェクト！</div>
+      <button class="quiz-close-btn" id="quizCloseBtn">閉じる</button>
+    </div>
+  </div>
 </div>
 <script>
   const parts = {
@@ -500,11 +659,34 @@
   const levelupSub = document.getElementById('levelupSub');
   const powerPerSecondEl = document.getElementById('powerPerSecond');
   const shopListEl = document.getElementById('shopList');
+  const quizOpenBtn = document.getElementById('quizOpenBtn');
+  const quizOverlay = document.getElementById('quizOverlay');
+  const quizQuestionView = document.getElementById('quizQuestionView');
+  const quizResultView = document.getElementById('quizResultView');
+  const quizProgress = document.getElementById('quizProgress');
+  const quizQuestionEl = document.getElementById('quizQuestion');
+  const quizChoicesEl = document.getElementById('quizChoices');
+  const quizFeedbackText = document.getElementById('quizFeedbackText');
+  const quizResultTitle = document.getElementById('quizResultTitle');
+  const quizResultBonus = document.getElementById('quizResultBonus');
+  const quizResultPerfect = document.getElementById('quizResultPerfect');
+  const quizCloseBtn = document.getElementById('quizCloseBtn');
   let levelupTimer = null;
   const STORAGE_KEY = 'macho-game-progress';
   const STAGE_THRESHOLDS = [0, 10, 25, 45, 70, 100];
   const TITLES = ['ひょろがり', 'かけだし', '見習いルチャドール', '中堅ルチャドール', '覆面マッチョ', '伝説の覆面王'];
+  const PART_LABELS = { chest: '胸', arm: '腕', leg: '脚', shoulder: '肩', back: '背中', abs: '腹' };
+  const QUIZ_QUESTION_COUNT = 5;
+  const QUIZ_CORRECT_BONUS = 50;
+  const QUIZ_PERFECT_BONUS = 200;
+  const QUIZ_ANSWER_DELAY = 1200;
   let currentStage = -1;
+  let quizQuestions = [];
+  let quizIndex = 0;
+  let quizCorrectCount = 0;
+  let quizAnswering = false;
+  let quizPendingBonus = 0;
+  let quizAdvanceTimer = null;
 
   const SHOP_ITEMS = [
     { id: 'protein', name: 'プロテイン', desc: '1タップの獲得量 +1', basePrice: 10, type: 'tap', value: 1 },
@@ -650,6 +832,127 @@
     }, 1500);
   }
 
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function pickChoiceKeys(correctKey) {
+    const keys = Object.keys(parts);
+    const wrongPool = shuffle(keys.filter(k => k !== correctKey));
+    return shuffle([correctKey, ...wrongPool.slice(0, 3)]);
+  }
+
+  function buildQuizQuestions() {
+    const keys = Object.keys(parts);
+    const questions = [];
+    for (let i = 0; i < QUIZ_QUESTION_COUNT; i++) {
+      const key = keys[Math.floor(Math.random() * keys.length)];
+      const type = Math.random() < 0.5 ? 'A' : 'B';
+      const choiceKeys = pickChoiceKeys(key);
+      const correctIndex = choiceKeys.indexOf(key);
+      if (type === 'A') {
+        questions.push({
+          text: parts[key].name + 'は、どの部位の筋肉？',
+          choices: choiceKeys.map(k => PART_LABELS[k]),
+          correctIndex: correctIndex
+        });
+      } else {
+        questions.push({
+          text: PART_LABELS[key] + 'の筋肉の正式名称は？',
+          choices: choiceKeys.map(k => parts[k].name),
+          correctIndex: correctIndex
+        });
+      }
+    }
+    return questions;
+  }
+
+  function renderQuizQuestion() {
+    quizAnswering = false;
+    const q = quizQuestions[quizIndex];
+    quizProgress.textContent = (quizIndex + 1) + '問目 / ' + QUIZ_QUESTION_COUNT + '問';
+    quizQuestionEl.textContent = q.text;
+    quizFeedbackText.hidden = true;
+    quizChoicesEl.innerHTML = '';
+    q.choices.forEach((label, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-choice-btn';
+      btn.textContent = label;
+      btn.addEventListener('click', () => handleQuizAnswer(idx, btn));
+      quizChoicesEl.appendChild(btn);
+    });
+  }
+
+  function handleQuizAnswer(idx, btnEl) {
+    if (quizAnswering) return;
+    quizAnswering = true;
+    const q = quizQuestions[quizIndex];
+    const buttons = Array.from(quizChoicesEl.children);
+    buttons.forEach(b => { b.disabled = true; });
+    if (idx === q.correctIndex) {
+      btnEl.classList.add('correct');
+      quizCorrectCount++;
+      quizFeedbackText.textContent = '正解！';
+      quizFeedbackText.className = 'quiz-feedback-text correct';
+    } else {
+      btnEl.classList.add('wrong');
+      buttons[q.correctIndex].classList.add('correct');
+      quizFeedbackText.textContent = '正解は ' + q.choices[q.correctIndex];
+      quizFeedbackText.className = 'quiz-feedback-text wrong';
+    }
+    quizFeedbackText.hidden = false;
+    quizAdvanceTimer = setTimeout(() => {
+      quizIndex++;
+      if (quizIndex < quizQuestions.length) {
+        renderQuizQuestion();
+      } else {
+        showQuizResult();
+      }
+    }, QUIZ_ANSWER_DELAY);
+  }
+
+  function showQuizResult() {
+    quizQuestionView.hidden = true;
+    quizResultView.hidden = false;
+    quizResultTitle.textContent = quizCorrectCount + '問正解！';
+    let bonus = quizCorrectCount * QUIZ_CORRECT_BONUS;
+    const perfect = quizCorrectCount === quizQuestions.length;
+    if (perfect) bonus += QUIZ_PERFECT_BONUS;
+    quizResultBonus.textContent = '＋' + formatNumber(bonus) + 'P 獲得';
+    quizResultPerfect.hidden = !perfect;
+    quizPendingBonus = bonus;
+  }
+
+  function openQuiz() {
+    quizQuestions = buildQuizQuestions();
+    quizIndex = 0;
+    quizCorrectCount = 0;
+    quizPendingBonus = 0;
+    quizQuestionView.hidden = false;
+    quizResultView.hidden = true;
+    quizOverlay.hidden = false;
+    renderQuizQuestion();
+  }
+
+  function closeQuiz() {
+    clearTimeout(quizAdvanceTimer);
+    const bonus = quizPendingBonus;
+    quizPendingBonus = 0;
+    quizOverlay.hidden = true;
+    if (bonus > 0) {
+      powerWallet += bonus;
+      powerLifetime += bonus;
+      updateBodyStage();
+      refreshShopDisplay();
+      saveProgress();
+    }
+  }
+
   function saveProgress() {
     const data = {};
     Object.keys(parts).forEach(key => { data[key] = parts[key].count; });
@@ -739,6 +1042,9 @@
     if (!btn || btn.disabled) return;
     buyItem(btn.dataset.id);
   });
+
+  quizOpenBtn.addEventListener('click', openQuiz);
+  quizCloseBtn.addEventListener('click', closeQuiz);
 
   setInterval(() => {
     const ps = calcPerSecond();
