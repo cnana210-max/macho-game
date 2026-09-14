@@ -396,6 +396,62 @@
   .reset-btn:active {
     opacity: 1;
   }
+  .offline-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 12, 5, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9990;
+    padding: 20px;
+  }
+  .offline-overlay[hidden] {
+    display: none;
+  }
+  .offline-card {
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 26px 24px;
+    max-width: 320px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .offline-title {
+    font-size: clamp(20px, 6vw, 24px);
+    font-weight: bold;
+    color: var(--accent-dark);
+    margin-bottom: 10px;
+  }
+  .offline-desc {
+    font-size: clamp(14px, 4vw, 16px);
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .offline-amount {
+    font-size: clamp(22px, 7vw, 30px);
+    font-weight: 900;
+    color: var(--red);
+    margin-bottom: 18px;
+  }
+  .offline-claim-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    border-radius: 999px;
+    padding: 12px 32px;
+    font-size: clamp(15px, 4.5vw, 17px);
+    font-weight: bold;
+    font-family: inherit;
+    color: #fff;
+    background: var(--accent);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .offline-claim-btn:active {
+    filter: brightness(0.9);
+  }
   @media (max-height: 640px) {
     .character-img { max-height: 225px; }
     .stage { min-height: 225px; padding: 6px 0 12px; }
@@ -475,6 +531,14 @@
   <div class="levelup-main-text">筋肉増量！</div>
   <div class="levelup-sub-text" id="levelupSub">かけだし に昇格！</div>
 </div>
+<div class="offline-overlay" id="offlineOverlay" hidden>
+  <div class="offline-card">
+    <div class="offline-title">おかえり！</div>
+    <div class="offline-desc" id="offlineDesc">留守の間に 0時間0分 トレーニングしました</div>
+    <div class="offline-amount" id="offlineAmount">＋0P 獲得！</div>
+    <button class="offline-claim-btn" id="offlineClaimBtn">受け取る</button>
+  </div>
+</div>
 <script>
   const parts = {
     chest: { name: '大胸筋', desc: '胸の中心を覆う大きな筋肉。押す動作で使われます。', count: 0 },
@@ -500,11 +564,19 @@
   const levelupSub = document.getElementById('levelupSub');
   const powerPerSecondEl = document.getElementById('powerPerSecond');
   const shopListEl = document.getElementById('shopList');
+  const offlineOverlay = document.getElementById('offlineOverlay');
+  const offlineDesc = document.getElementById('offlineDesc');
+  const offlineAmount = document.getElementById('offlineAmount');
+  const offlineClaimBtn = document.getElementById('offlineClaimBtn');
   let levelupTimer = null;
   const STORAGE_KEY = 'macho-game-progress';
   const STAGE_THRESHOLDS = [0, 10, 25, 45, 70, 100];
   const TITLES = ['ひょろがり', 'かけだし', '見習いルチャドール', '中堅ルチャドール', '覆面マッチョ', '伝説の覆面王'];
+  const OFFLINE_CAP_SECONDS = 8 * 60 * 60;
+  const OFFLINE_MIN_SECONDS = 60;
   let currentStage = -1;
+  let lastActiveAt = null;
+  let pendingOfflineReward = null;
 
   const SHOP_ITEMS = [
     { id: 'protein', name: 'プロテイン', desc: '1タップの獲得量 +1', basePrice: 10, type: 'tap', value: 1 },
@@ -656,6 +728,7 @@
     data.powerWallet = powerWallet;
     data.powerLifetime = powerLifetime;
     data.shopOwned = shopOwned;
+    data.lastActiveAt = Date.now();
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
   }
 
@@ -679,10 +752,38 @@
         }
       });
     }
+    lastActiveAt = typeof saved.lastActiveAt === 'number' ? saved.lastActiveAt : null;
     if (tapTotal > 0) {
       infoName.textContent = 'おかえりなさい！';
       infoDesc.textContent = 'ここまで育てたマッチョです。続きを鍛えましょう';
     }
+  }
+
+  function checkOfflineReward() {
+    const ps = calcPerSecond();
+    if (ps <= 0 || !lastActiveAt) return;
+    const elapsedSec = Math.floor((Date.now() - lastActiveAt) / 1000);
+    if (elapsedSec < OFFLINE_MIN_SECONDS) return;
+    const cappedSec = Math.min(elapsedSec, OFFLINE_CAP_SECONDS);
+    const earned = ps * cappedSec;
+    if (earned <= 0) return;
+    pendingOfflineReward = { seconds: cappedSec, amount: earned };
+    const hours = Math.floor(cappedSec / 3600);
+    const minutes = Math.floor((cappedSec % 3600) / 60);
+    offlineDesc.textContent = '留守の間に ' + hours + '時間' + minutes + '分 トレーニングしました';
+    offlineAmount.textContent = '＋' + formatNumber(earned) + 'P 獲得！';
+    offlineOverlay.hidden = false;
+  }
+
+  function claimOfflineReward() {
+    if (!pendingOfflineReward) return;
+    powerWallet += pendingOfflineReward.amount;
+    powerLifetime += pendingOfflineReward.amount;
+    pendingOfflineReward = null;
+    offlineOverlay.hidden = true;
+    updateBodyStage();
+    refreshShopDisplay();
+    saveProgress();
   }
 
   document.querySelectorAll('.part-status').forEach(zone => {
@@ -711,11 +812,21 @@
     powerWallet = 0;
     powerLifetime = 0;
     Object.keys(shopOwned).forEach(id => { shopOwned[id] = 0; });
+    lastActiveAt = null;
+    pendingOfflineReward = null;
+    offlineOverlay.hidden = true;
     infoName.textContent = 'さあ、鍛えよう！';
     infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう';
     updateBodyStage();
     refreshShopDisplay();
     try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  });
+
+  offlineClaimBtn.addEventListener('click', claimOfflineReward);
+
+  window.addEventListener('pagehide', saveProgress);
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') saveProgress();
   });
 
   SHOP_ITEMS.forEach(item => {
@@ -755,6 +866,7 @@
   bodyImg.src = 'images/lv' + (currentStage + 1) + '.png';
   updateTopDisplay(currentStage);
   refreshShopDisplay();
+  checkOfflineReward();
 </script>
 </body>
 </html>
