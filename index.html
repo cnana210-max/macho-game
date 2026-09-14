@@ -162,6 +162,45 @@
     min-height: 300px;
     padding: 12px 0;
   }
+  .character-wrap {
+    position: relative;
+    height: 100%;
+    max-height: 300px;
+    width: fit-content;
+    max-width: 100%;
+  }
+  .character-wrap.wobble {
+    animation: charWobble 0.3s ease;
+  }
+  @keyframes charWobble {
+    0% { transform: rotate(0deg) translateX(0); }
+    25% { transform: rotate(-1.2deg) translateX(-2px); }
+    50% { transform: rotate(1deg) translateX(2px); }
+    75% { transform: rotate(-0.5deg) translateX(-1px); }
+    100% { transform: rotate(0deg) translateX(0); }
+  }
+  .part-glow-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  .part-glow {
+    position: absolute;
+    width: 25%;
+    aspect-ratio: 1;
+    left: 0;
+    top: 0;
+    transform: translate(-50%, -50%) scale(0.6);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(245,197,24,0.95) 0%, rgba(245,197,24,0.55) 40%, rgba(245,197,24,0) 75%);
+    opacity: 0;
+    animation: partGlowPulse 0.4s ease-out forwards;
+  }
+  @keyframes partGlowPulse {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.6); }
+    25% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(1.15); }
+  }
   .character-img {
     display: block;
     width: auto;
@@ -343,9 +382,11 @@
     font-family: inherit;
     cursor: pointer;
     touch-action: manipulation;
+    transition: transform 0.12s ease;
   }
   .part-status:active {
     filter: brightness(0.9);
+    transform: scale(0.92);
   }
   .btn-label {
     font-size: clamp(18px, 5vw, 22px);
@@ -636,7 +677,10 @@
   </div>
   <div class="stage">
     <div class="levelup-glow" id="levelupGlow"></div>
-    <img class="character-img" id="bodyImage" src="images/lv1.png" alt="キャラクター">
+    <div class="character-wrap" id="characterWrap">
+      <img class="character-img" id="bodyImage" src="images/lv1.png" alt="キャラクター">
+      <div class="part-glow-layer" id="partGlowLayer"></div>
+    </div>
     <div class="levelup-particles" id="levelupParticles"></div>
   </div>
   <div class="info" id="info">
@@ -712,6 +756,8 @@
   const infoName = document.querySelector('#info .name');
   const infoDesc = document.querySelector('#info .desc');
   const bodyImg = document.getElementById('bodyImage');
+  const characterWrap = document.getElementById('characterWrap');
+  const partGlowLayer = document.getElementById('partGlowLayer');
   const powerPValue = document.getElementById('powerPValue');
   const titleValue = document.getElementById('titleValue');
   const progressTrack = document.getElementById('progressTrack');
@@ -744,6 +790,33 @@
   const STAGE_THRESHOLDS = [0, 10, 25, 45, 70, 100];
   const TITLES = ['ひょろがり', 'かけだし', '見習いルチャドール', '中堅ルチャドール', '覆面マッチョ', '伝説の覆面王'];
   const PART_LABELS = { chest: '胸', arm: '腕', leg: '脚', shoulder: '肩', back: '背中', abs: '腹' };
+  const PART_GLOW_POINTS = {
+    chest: [[50, 35]],
+    arm: [[25, 45], [75, 45]],
+    leg: [[38, 72], [62, 72]],
+    shoulder: [[30, 28], [70, 28]],
+    back: [[50, 40]],
+    abs: [[50, 52]]
+  };
+
+  function spawnPartGlow(part) {
+    const points = PART_GLOW_POINTS[part];
+    if (!points) return;
+    points.forEach(([x, y]) => {
+      const g = document.createElement('div');
+      g.className = 'part-glow';
+      g.style.left = x + '%';
+      g.style.top = y + '%';
+      partGlowLayer.appendChild(g);
+      setTimeout(() => g.remove(), 450);
+    });
+  }
+
+  function triggerCharacterWobble() {
+    characterWrap.classList.remove('wobble');
+    void characterWrap.offsetWidth;
+    characterWrap.classList.add('wobble');
+  }
   const QUIZ_QUESTION_COUNT = 5;
   const QUIZ_CORRECT_BONUS = 50;
   const QUIZ_PERFECT_BONUS = 200;
@@ -1104,6 +1177,8 @@
       const gain = 1 + calcTapBonus();
       powerWallet += gain;
       powerLifetime += gain;
+      spawnPartGlow(part);
+      triggerCharacterWobble();
       updateBodyStage();
       refreshShopDisplay();
       saveProgress();
