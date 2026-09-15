@@ -1536,7 +1536,7 @@
     data.powerWallet = powerWallet;
     data.powerLifetime = powerLifetime;
     data.shopOwned = shopOwned;
-    data.lastActiveAt = Date.now();
+    data.lastActiveAt = lastActiveAt;
     data.streakDays = streakDays;
     data.lastBonusDate = lastBonusDate;
     data.earnedBadges = earnedBadges;
@@ -1799,9 +1799,15 @@
   offlineBannerBtn.addEventListener('click', claimOfflineReward);
   dailyBannerBtn.addEventListener('click', claimDailyBonus);
 
-  window.addEventListener('pagehide', saveProgress);
+  window.addEventListener('pagehide', () => {
+    lastActiveAt = Date.now();
+    saveProgress();
+  });
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') saveProgress();
+    if (document.visibilityState === 'hidden') {
+      lastActiveAt = Date.now();
+      saveProgress();
+    }
   });
 
   SHOP_ITEMS.forEach(item => {
