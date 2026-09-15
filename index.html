@@ -901,6 +901,23 @@
     flex-direction: column;
     gap: 12px;
   }
+  .shop-group + .shop-group {
+    margin-top: 18px;
+  }
+  .shop-group-title {
+    font-size: clamp(14px, 4vw, 16px);
+    font-weight: bold;
+    color: var(--gold);
+    letter-spacing: 0.03em;
+    margin-bottom: 6px;
+  }
+  .shop-group-note {
+    font-size: 12px;
+    color: var(--desc);
+    opacity: 0.85;
+    margin-bottom: 10px;
+    line-height: 1.5;
+  }
   .shop-item {
     display: flex;
     align-items: center;
@@ -917,8 +934,27 @@
     min-width: 0;
   }
   .shop-item-name {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
     font-size: clamp(14px, 4vw, 16px);
     font-weight: bold;
+    color: #fff;
+  }
+  .shop-type-badge {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 2px 7px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .shop-type-auto {
+    background: var(--gold);
+    color: #1c1508;
+  }
+  .shop-type-tap {
+    background: var(--red);
     color: #fff;
   }
   .shop-item-desc {
@@ -1843,20 +1879,37 @@
     }
   });
 
-  SHOP_ITEMS.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'shop-item';
-    div.innerHTML =
-      '<div class="shop-item-info">' +
-        '<div class="shop-item-name">' + item.name + '</div>' +
-        '<div class="shop-item-desc">' + item.desc + '</div>' +
-        '<div class="shop-item-owned">所持数: <span class="owned-val" id="owned-' + item.id + '">0</span></div>' +
-      '</div>' +
-      '<button class="shop-buy-btn" id="buy-' + item.id + '" data-id="' + item.id + '">' +
-        '<span class="price-val" id="price-' + item.id + '">' + formatNumber(item.basePrice) + 'P</span>' +
-        '<span class="buy-label">買う</span>' +
-      '</button>';
-    shopListEl.appendChild(div);
+  const SHOP_GROUPS = [
+    { type: 'auto', title: '自動でPが増える', note: 'このグループのアイテムを買うと、アプリを閉じている間もPがたまります', labelText: '自動', labelClass: 'shop-type-auto' },
+    { type: 'tap', title: 'タップが強くなる', labelText: 'タップ', labelClass: 'shop-type-tap' }
+  ];
+  SHOP_GROUPS.forEach(group => {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'shop-group';
+    let groupHtml = '<div class="shop-group-title">' + group.title + '</div>';
+    if (group.note) {
+      groupHtml += '<div class="shop-group-note">' + group.note + '</div>';
+    }
+    const listDiv = document.createElement('div');
+    listDiv.className = 'shop-list';
+    SHOP_ITEMS.filter(item => item.type === group.type).forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'shop-item';
+      div.innerHTML =
+        '<div class="shop-item-info">' +
+          '<div class="shop-item-name">' + item.name + ' <span class="shop-type-badge ' + group.labelClass + '">' + group.labelText + '</span></div>' +
+          '<div class="shop-item-desc">' + item.desc + '</div>' +
+          '<div class="shop-item-owned">所持数: <span class="owned-val" id="owned-' + item.id + '">0</span></div>' +
+        '</div>' +
+        '<button class="shop-buy-btn" id="buy-' + item.id + '" data-id="' + item.id + '">' +
+          '<span class="price-val" id="price-' + item.id + '">' + formatNumber(item.basePrice) + 'P</span>' +
+          '<span class="buy-label">買う</span>' +
+        '</button>';
+      listDiv.appendChild(div);
+    });
+    groupDiv.innerHTML = groupHtml;
+    groupDiv.appendChild(listDiv);
+    shopListEl.appendChild(groupDiv);
   });
 
   shopListEl.addEventListener('click', (e) => {
