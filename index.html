@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>マッチョ育成ゲーム</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap">
 <style>
   :root {
     color-scheme: dark;
@@ -21,6 +24,8 @@
     --blue: #2b5fa8;
     --white: #ffffff;
     --outline: #3a2419;
+    --gold-line: #c9a227;
+    --card-top: #1c1824;
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
@@ -49,14 +54,21 @@
     font-size: clamp(20px, 5vw, 28px);
     margin: 4px 0 12px;
     letter-spacing: 0.05em;
+    font-family: 'Dela Gothic One', "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #fff2c2 0%, var(--gold) 45%, #a9790f 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 2px 0 rgba(0,0,0,0.55), 0 4px 10px rgba(0,0,0,0.5);
   }
   .offline-banner {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    background: var(--panel);
-    border-radius: 14px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 10px;
     padding: 10px 14px;
     margin-bottom: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -105,8 +117,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    background: var(--panel);
-    border-radius: 14px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 10px;
     padding: 10px 14px;
     margin-bottom: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -149,8 +162,11 @@
   }
   .stat-box {
     flex: 1;
-    background: var(--panel);
-    border-radius: 14px;
+    background: linear-gradient(180deg, #17121e 0%, #0b0810 100%);
+    border: 3px solid var(--gold-line);
+    outline: 1px solid var(--gold-line);
+    outline-offset: -6px;
+    border-radius: 10px;
     padding: 12px 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
@@ -168,6 +184,7 @@
   }
   #titleValue {
     color: var(--gold);
+    letter-spacing: 0.04em;
   }
   .progress-track {
     height: 8px;
@@ -178,7 +195,7 @@
   }
   .progress-fill {
     height: 100%;
-    background: var(--accent);
+    background: linear-gradient(90deg, #a9790f 0%, var(--gold) 55%, #fff2c2 100%);
     width: 0%;
     transition: width 0.3s ease;
   }
@@ -503,8 +520,9 @@
     box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
   .info {
-    background: var(--panel);
-    border-radius: 16px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 10px;
     padding: 16px 18px;
     margin: 0 0 20px;
     min-height: 64px;
@@ -535,18 +553,19 @@
     align-items: center;
     gap: 6px;
     padding: 12px 6px;
-    border-radius: 18px;
-    background: var(--accent);
+    border-radius: 12px;
+    background: linear-gradient(180deg, #d93636 0%, #8b1a1a 100%);
     color: #fff;
-    border: none;
+    border: 2px solid var(--gold-line);
     font-family: inherit;
     cursor: pointer;
     touch-action: manipulation;
-    transition: transform 0.12s ease;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
   }
   .part-status:active {
     filter: brightness(0.9);
     transform: scale(0.92);
+    box-shadow: 0 0 0 3px var(--gold-line), 0 0 14px 2px rgba(245,197,24,0.75);
   }
   .btn-label {
     font-size: clamp(18px, 5vw, 22px);
@@ -592,8 +611,9 @@
     display: none;
   }
   .quiz-card {
-    background: var(--panel);
-    border-radius: 20px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 14px;
     padding: 24px 20px;
     max-width: 360px;
     width: 100%;
@@ -734,8 +754,9 @@
     display: none;
   }
   .badge-card {
-    background: var(--panel);
-    border-radius: 20px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 14px;
     padding: 20px 18px;
     max-width: 380px;
     width: 100%;
@@ -803,8 +824,9 @@
   .badge-detail {
     margin-top: 14px;
     padding: 10px 12px;
-    background: #2a2436;
-    border-radius: 12px;
+    background: linear-gradient(180deg, var(--card-top) 0%, #2a2436 100%);
+    border: 1px solid var(--gold-line);
+    border-radius: 8px;
   }
   .badge-detail[hidden] {
     display: none;
@@ -845,9 +867,9 @@
     align-items: center;
     justify-content: center;
     gap: 10px;
-    background: var(--panel);
-    border: 2px solid var(--gold);
-    border-radius: 14px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 10px;
     padding: 10px 14px;
     margin-bottom: 10px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -884,8 +906,9 @@
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    background: var(--panel);
-    border-radius: 14px;
+    background: linear-gradient(180deg, var(--card-top) 0%, var(--panel) 100%);
+    border: 2px solid var(--gold-line);
+    border-radius: 10px;
     padding: 14px 16px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
