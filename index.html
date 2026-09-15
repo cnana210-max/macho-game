@@ -698,6 +698,172 @@
   .quiz-close-btn:active {
     filter: brightness(0.9);
   }
+  .badge-open-btn {
+    -webkit-appearance: none;
+    appearance: none;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 12px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #6b4fa8, #3d2a63);
+    color: #fff;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: clamp(14px, 4.2vw, 17px);
+    cursor: pointer;
+    touch-action: manipulation;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  }
+  .badge-open-btn:active {
+    filter: brightness(0.92);
+  }
+  .badge-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 14, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9980;
+    padding: 20px;
+  }
+  .badge-overlay[hidden] {
+    display: none;
+  }
+  .badge-card {
+    background: var(--panel);
+    border-radius: 20px;
+    padding: 20px 18px;
+    max-width: 380px;
+    width: 100%;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  }
+  .badge-card-title {
+    font-size: clamp(17px, 5vw, 20px);
+    font-weight: bold;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 14px;
+  }
+  .badge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .badge-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+    touch-action: manipulation;
+    padding: 4px 2px;
+  }
+  .badge-icon-circle {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border: 2px solid var(--gold);
+    background: rgba(245,197,24,0.12);
+  }
+  .badge-cell.locked .badge-icon-circle {
+    border-color: #4a4454;
+    background: #2a2436;
+    color: #6a6274;
+  }
+  .badge-cell-name {
+    font-size: 11px;
+    font-weight: bold;
+    color: var(--desc);
+    text-align: center;
+    line-height: 1.3;
+  }
+  .badge-cell.unlocked .badge-cell-name {
+    color: #fff;
+  }
+  .badge-cell-cond {
+    font-size: 9px;
+    color: var(--desc);
+    opacity: 0.8;
+    text-align: center;
+    line-height: 1.25;
+  }
+  .badge-detail {
+    margin-top: 14px;
+    padding: 10px 12px;
+    background: #2a2436;
+    border-radius: 12px;
+  }
+  .badge-detail[hidden] {
+    display: none;
+  }
+  .badge-detail-name {
+    font-weight: bold;
+    color: var(--gold);
+    margin-bottom: 4px;
+    font-size: 14px;
+  }
+  .badge-detail-desc {
+    font-size: 13px;
+    color: var(--desc);
+    line-height: 1.4;
+  }
+  .badge-close-btn {
+    display: block;
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    margin-top: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: clamp(15px, 4.5vw, 17px);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+  .badge-close-btn:active {
+    filter: brightness(0.9);
+  }
+  .badge-toast {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 2px solid var(--gold);
+    border-radius: 14px;
+    padding: 10px 14px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    animation: bannerSlideDown 0.3s ease;
+  }
+  .badge-toast[hidden] {
+    display: none;
+  }
+  .badge-toast.hide {
+    animation: bannerSlideUp 0.3s ease forwards;
+  }
+  .badge-toast-text {
+    font-size: clamp(12px, 3.6vw, 14px);
+    font-weight: bold;
+    color: var(--gold);
+    text-align: center;
+  }
   .shop {
     margin-top: 18px;
   }
@@ -808,6 +974,7 @@
     .stat-box { padding: 8px 12px; }
     .info { padding: 10px 14px; min-height: 52px; margin-bottom: 10px; }
     .quiz-open-btn { margin-top: 12px; padding: 11px; }
+    .badge-open-btn { margin-top: 8px; padding: 10px; }
     .shop { margin-top: 12px; }
     .shop-item { padding: 8px 12px; }
     .reset-wrap { margin-top: 12px; }
@@ -824,6 +991,9 @@
   <div class="offline-banner" id="offlineBanner" hidden>
     <span class="offline-banner-text" id="offlineBannerText">おかえり！ 0時間0分のトレーニングで ＋0P</span>
     <button class="offline-banner-btn" id="offlineBannerBtn">受け取る</button>
+  </div>
+  <div class="badge-toast" id="badgeToast" hidden>
+    <span class="badge-toast-text" id="badgeToastText">実績解除！ ○○</span>
   </div>
   <div class="top-stats">
     <div class="stat-box">
@@ -886,6 +1056,7 @@
     </button>
   </div>
   <button class="quiz-open-btn" id="quizOpenBtn">筋肉クイズに挑戦</button>
+  <button class="badge-open-btn" id="badgeOpenBtn">実績バッジ（0/12）</button>
   <div class="shop">
     <div class="shop-title">ジム</div>
     <div class="shop-list" id="shopList"></div>
@@ -914,6 +1085,17 @@
       <div class="quiz-result-perfect" id="quizResultPerfect" hidden>パーフェクト！</div>
       <button class="quiz-close-btn" id="quizCloseBtn">閉じる</button>
     </div>
+  </div>
+</div>
+<div class="badge-overlay" id="badgeOverlay" hidden>
+  <div class="badge-card">
+    <div class="badge-card-title">実績バッジ</div>
+    <div class="badge-grid" id="badgeGrid"></div>
+    <div class="badge-detail" id="badgeDetail" hidden>
+      <div class="badge-detail-name" id="badgeDetailName"></div>
+      <div class="badge-detail-desc" id="badgeDetailDesc"></div>
+    </div>
+    <button class="badge-close-btn" id="badgeCloseBtn">閉じる</button>
   </div>
 </div>
 <script>
@@ -966,6 +1148,15 @@
   const dailyBanner = document.getElementById('dailyBanner');
   const dailyBannerText = document.getElementById('dailyBannerText');
   const dailyBannerBtn = document.getElementById('dailyBannerBtn');
+  const badgeOpenBtn = document.getElementById('badgeOpenBtn');
+  const badgeOverlay = document.getElementById('badgeOverlay');
+  const badgeGrid = document.getElementById('badgeGrid');
+  const badgeDetail = document.getElementById('badgeDetail');
+  const badgeDetailName = document.getElementById('badgeDetailName');
+  const badgeDetailDesc = document.getElementById('badgeDetailDesc');
+  const badgeCloseBtn = document.getElementById('badgeCloseBtn');
+  const badgeToast = document.getElementById('badgeToast');
+  const badgeToastText = document.getElementById('badgeToastText');
   let levelupTimer = null;
   const STORAGE_KEY = 'macho-game-progress';
   const DAILY_BONUS_AMOUNTS = [100, 200, 300, 500, 700, 1000, 1500];
@@ -1025,6 +1216,25 @@
   let streakDays = 0;
   let lastBonusDate = null;
   let pendingDailyBonus = null;
+  let earnedBadges = [];
+  let quizBestCorrect = 0;
+  let offlineClaimCount = 0;
+  let badgeToastTimer = null;
+  let badgeToastQueue = [];
+  const BADGES = [
+    { id: 'first_tap', name: '初めの一歩', icon: '🔰', desc: 'はじめて部位ボタンをタップする' },
+    { id: 'tap100', name: '百戦錬磨', icon: '💯', desc: '合計100回タップする' },
+    { id: 'tap1000', name: '千本ノック', icon: '🔥', desc: '合計1,000回タップする' },
+    { id: 'gym_first', name: 'ジム通い', icon: '🏋️', desc: 'ジムでアイテムを1つ買う' },
+    { id: 'gym10', name: '設備投資', icon: '💪', desc: 'ジムのアイテムを合計10個持つ' },
+    { id: 'belt', name: '王者のベルト', icon: '🏆', desc: '「王者のベルト」を買う' },
+    { id: 'quiz4', name: '秀才', icon: '📚', desc: 'クイズで5問中4問以上正解する' },
+    { id: 'quizperfect', name: '満点王', icon: '🎓', desc: 'クイズで全問正解する' },
+    { id: 'maxstage', name: '覆面王', icon: '👑', desc: 'Lv.6「伝説の覆面王」に到達する' },
+    { id: 'streak7', name: '皆勤賞', icon: '📅', desc: 'ログインボーナスを7日連続で受け取る' },
+    { id: 'offline1', name: '留守番上手', icon: '💤', desc: 'オフライン報酬を1回受け取る' },
+    { id: 'balance100', name: 'バランス王', icon: '⚖️', desc: '6部位すべてを100回以上タップする' }
+  ];
 
   const SHOP_ITEMS = [
     { id: 'protein', name: 'プロテイン', desc: '1タップの獲得量 +1', basePrice: 10, type: 'tap', value: 1 },
@@ -1108,6 +1318,7 @@
     shopOwned[id] += 1;
     updateTopDisplay(currentStage);
     refreshShopDisplay();
+    evaluateBadges();
     saveProgress();
   }
 
@@ -1289,6 +1500,8 @@
     quizResultBonus.textContent = '＋' + formatNumber(bonus) + 'P 獲得';
     quizResultPerfect.hidden = !perfect;
     quizPendingBonus = bonus;
+    quizBestCorrect = Math.max(quizBestCorrect, quizCorrectCount);
+    evaluateBadges();
   }
 
   function openQuiz() {
@@ -1325,6 +1538,9 @@
     data.lastActiveAt = Date.now();
     data.streakDays = streakDays;
     data.lastBonusDate = lastBonusDate;
+    data.earnedBadges = earnedBadges;
+    data.quizBestCorrect = quizBestCorrect;
+    data.offlineClaimCount = offlineClaimCount;
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch (e) {}
   }
 
@@ -1351,6 +1567,9 @@
     lastActiveAt = typeof saved.lastActiveAt === 'number' ? saved.lastActiveAt : null;
     streakDays = typeof saved.streakDays === 'number' ? saved.streakDays : 0;
     lastBonusDate = typeof saved.lastBonusDate === 'string' ? saved.lastBonusDate : null;
+    earnedBadges = Array.isArray(saved.earnedBadges) ? saved.earnedBadges : [];
+    quizBestCorrect = typeof saved.quizBestCorrect === 'number' ? saved.quizBestCorrect : 0;
+    offlineClaimCount = typeof saved.offlineClaimCount === 'number' ? saved.offlineClaimCount : 0;
     if (tapTotal > 0) {
       infoName.textContent = 'おかえりなさい！';
       infoDesc.textContent = 'ここまで育てたマッチョです。続きを鍛えましょう';
@@ -1383,8 +1602,10 @@
     }, 300);
     powerWallet += bonus;
     powerLifetime += bonus;
+    offlineClaimCount++;
     updateBodyStage();
     refreshShopDisplay();
+    evaluateBadges();
     saveProgress();
   }
 
@@ -1427,7 +1648,96 @@
     powerLifetime += bonus;
     updateBodyStage();
     refreshShopDisplay();
+    evaluateBadges();
     saveProgress();
+  }
+
+  function updateBadgeButtonLabel() {
+    badgeOpenBtn.textContent = '実績バッジ（' + earnedBadges.length + '/12）';
+  }
+
+  function queueBadgeToast(badge) {
+    badgeToastQueue.push(badge);
+    if (!badgeToastTimer) showNextBadgeToast();
+  }
+
+  function showNextBadgeToast() {
+    if (badgeToastQueue.length === 0) { badgeToastTimer = null; return; }
+    const badge = badgeToastQueue.shift();
+    badgeToastText.textContent = '実績解除！ ' + badge.name;
+    badgeToast.classList.remove('hide');
+    badgeToast.hidden = false;
+    badgeToastTimer = setTimeout(() => {
+      badgeToast.classList.add('hide');
+      setTimeout(() => {
+        badgeToast.hidden = true;
+        badgeToast.classList.remove('hide');
+        badgeToastTimer = null;
+        showNextBadgeToast();
+      }, 300);
+    }, 3000);
+  }
+
+  function evaluateBadges() {
+    const tapTotal = Object.keys(parts).reduce((sum, k) => sum + parts[k].count, 0);
+    const shopTotal = Object.keys(shopOwned).reduce((sum, k) => sum + shopOwned[k], 0);
+    const allPartsOver100 = Object.keys(parts).every(k => parts[k].count >= 100);
+    const conditions = {
+      first_tap: tapTotal >= 1,
+      tap100: tapTotal >= 100,
+      tap1000: tapTotal >= 1000,
+      gym_first: shopTotal >= 1,
+      gym10: shopTotal >= 10,
+      belt: shopOwned.belt >= 1,
+      quiz4: quizBestCorrect >= 4,
+      quizperfect: quizBestCorrect >= 5,
+      maxstage: currentStage >= 5,
+      streak7: streakDays >= 7,
+      offline1: offlineClaimCount >= 1,
+      balance100: allPartsOver100
+    };
+    let changed = false;
+    BADGES.forEach(b => {
+      if (conditions[b.id] && !earnedBadges.includes(b.id)) {
+        earnedBadges.push(b.id);
+        queueBadgeToast(b);
+        changed = true;
+      }
+    });
+    if (changed) {
+      updateBadgeButtonLabel();
+      if (!badgeOverlay.hidden) renderBadgeGrid();
+      saveProgress();
+    }
+  }
+
+  function renderBadgeGrid() {
+    badgeGrid.innerHTML = '';
+    BADGES.forEach(b => {
+      const unlocked = earnedBadges.includes(b.id);
+      const cell = document.createElement('button');
+      cell.className = 'badge-cell ' + (unlocked ? 'unlocked' : 'locked');
+      cell.innerHTML =
+        '<div class="badge-icon-circle">' + (unlocked ? b.icon : '？') + '</div>' +
+        '<div class="badge-cell-name">' + b.name + '</div>' +
+        (unlocked ? '' : '<div class="badge-cell-cond">' + b.desc + '</div>');
+      cell.addEventListener('click', () => {
+        badgeDetailName.textContent = b.name + (unlocked ? '（獲得済み）' : '（未獲得）');
+        badgeDetailDesc.textContent = '達成条件：' + b.desc;
+        badgeDetail.hidden = false;
+      });
+      badgeGrid.appendChild(cell);
+    });
+  }
+
+  function openBadges() {
+    badgeDetail.hidden = true;
+    renderBadgeGrid();
+    badgeOverlay.hidden = false;
+  }
+
+  function closeBadges() {
+    badgeOverlay.hidden = true;
   }
 
   document.querySelectorAll('.part-status').forEach(zone => {
@@ -1445,6 +1755,7 @@
       triggerCharacterWobble();
       updateBodyStage();
       refreshShopDisplay();
+      evaluateBadges();
       saveProgress();
     });
   });
@@ -1467,6 +1778,16 @@
     pendingDailyBonus = null;
     dailyBanner.hidden = true;
     dailyBanner.classList.remove('hide');
+    earnedBadges = [];
+    quizBestCorrect = 0;
+    offlineClaimCount = 0;
+    badgeToastQueue = [];
+    clearTimeout(badgeToastTimer);
+    badgeToastTimer = null;
+    badgeToast.hidden = true;
+    badgeToast.classList.remove('hide');
+    badgeOverlay.hidden = true;
+    updateBadgeButtonLabel();
     infoName.textContent = 'さあ、鍛えよう！';
     infoDesc.textContent = 'キャラクターの体（胸・腕・脚・肩・背中・腹）をタップして筋トレを始めましょう';
     updateBodyStage();
@@ -1506,6 +1827,8 @@
 
   quizOpenBtn.addEventListener('click', openQuiz);
   quizCloseBtn.addEventListener('click', closeQuiz);
+  badgeOpenBtn.addEventListener('click', openBadges);
+  badgeCloseBtn.addEventListener('click', closeBadges);
 
   setInterval(() => {
     const ps = calcPerSecond();
@@ -1522,6 +1845,8 @@
   bodyImg.src = 'images/lv' + (currentStage + 1) + '.png';
   updateTopDisplay(currentStage);
   refreshShopDisplay();
+  updateBadgeButtonLabel();
+  evaluateBadges();
   checkOfflineReward();
   checkDailyBonus();
 </script>
